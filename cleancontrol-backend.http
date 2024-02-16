@@ -1,0 +1,6 @@
+@cleancontrol_backend_HostAddress = http://localhost:5240
+
+GET {{cleancontrol_backend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
