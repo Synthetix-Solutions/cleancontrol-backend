@@ -6,12 +6,12 @@ public static class ProductsEndpoints {
 	}
 
 	private static RouteGroupBuilder MapApi(this RouteGroupBuilder group) {
-		group.MapGet("/", () => "");
-		group.MapPost("/", () => "");
+		group.MapGet("/", () => TypedResults.Ok<IEnumerable<Schemas.InventoryItem>>(null));
+		group.MapPost("/", () => TypedResults.Ok<Schemas.InventoryItem>(null));
 
-		group.MapGet("/{id}", (int id) => id);
-		group.MapPut("/{id}", (int id) => id);
-		group.MapDelete("/{id}", (int id) => id);
+		group.MapGet("/{id}", (int id) => TypedResults.Ok<Schemas.InventoryItem>(null));
+		group.MapPut("/{id}", (int id) => TypedResults.Ok<Schemas.InventoryItem>(null));
+		group.MapDelete("/{id}", (int id) => TypedResults.Ok<Schemas.InventoryItem>(null));
 
 		return group;
 	}

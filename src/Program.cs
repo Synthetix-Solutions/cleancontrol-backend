@@ -51,6 +51,5 @@ ProductsEndpoints.Map(app);
 TasksEndpoints.Map(app);
 CleaningRunsEndpoints.Map(app);
 RoomsEndpoints.Map(app);
-InventoryEndpoints.Map(app);
 app.Run();
 

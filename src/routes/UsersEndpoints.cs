@@ -1,3 +1,5 @@
+using cleancontrol_db;
+
 namespace cleancontrol_backend.routes;
 
 public static class UsersEndpoints {
@@ -6,21 +8,13 @@ public static class UsersEndpoints {
 	}
 
 	public static RouteGroupBuilder MapUserApi(this RouteGroupBuilder group) {
-		group.MapGet("/", () => TypedResults.Ok(new User(Guid.Empty, "John Doe", "adsf")));
-		group.MapPost("/", () => "");
+		group.MapGet("/", () => TypedResults.Ok<Schemas.User[]>(null));
+		group.MapPost("/", () => TypedResults.Ok<Schemas.User>(null));
 
-		group.MapGet("/{id}", (int id) => id);
-		group.MapPut("/{id}", (int id) => id);
-		group.MapDelete("/{id}", (int id) => id);
+		group.MapGet("/{id}", (int id) => TypedResults.Ok<Schemas.User>(null));
+		group.MapPut("/{id}", (int id) => TypedResults.Ok<Schemas.User>(null));
+		group.MapDelete("/{id}", (int id) => TypedResults.Ok());
 
 		return group;
 	}
-
-	/// <summary>
-	///     I bin a Juser
-	/// </summary>
-	/// <param name="Id">Hilf ma</param>
-	/// <param name="Name">i spia</param>
-	/// <param name="Email">mi nimma</param>
-	public record User(Guid Id, string Name, string Email);
 }

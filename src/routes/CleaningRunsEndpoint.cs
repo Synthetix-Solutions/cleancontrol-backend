@@ -6,12 +6,12 @@ public static class CleaningRunsEndpoints {
 	}
 
 	private static RouteGroupBuilder MapCleaningRunsApi(this RouteGroupBuilder group) {
-		group.MapGet("/", () => "");
-		group.MapPost("/", () => "");
+		group.MapGet("/", () => TypedResults.Ok<IEnumerable<Schemas.CleaningRun>>(null));
+		group.MapPost("/", () => TypedResults.Ok<Schemas.CleaningRun>(null));
 
-		group.MapGet("/{id}", (int id) => id);
-		group.MapPut("/{id}", (int id) => id);
-		group.MapDelete("/{id}", (int id) => id);
+		group.MapGet("/{id}", (int id) => TypedResults.Ok<Schemas.CleaningRun>(null));
+		group.MapPut("/{id}", (int id) => TypedResults.Ok<Schemas.CleaningRun>(null));
+		group.MapDelete("/{id}", (int id) => TypedResults.Ok<Schemas.CleaningRun>(null));
 
 		return group;
 	}
