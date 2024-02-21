@@ -5,14 +5,15 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<InvariantGlobalization>true</InvariantGlobalization>
-		<RootNamespace>cleancontrol_backend</RootNamespace>
+		<RootNamespace>CleanControlBackend</RootNamespace>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+		<AssemblyName>CleanControlBackend</AssemblyName>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2"/>
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1"/>
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2"/>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0"/>
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0"/>
 	</ItemGroup>

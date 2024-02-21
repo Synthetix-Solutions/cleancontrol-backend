@@ -1,50 +1,106 @@
-namespace cleancontrol_backend.routes;
+#region
+
+using CleanControlBackend.Schemas;
+using CleanControlDb;
+using CleaningTask = CleanControlBackend.Schemas.CleaningTask;
+using Room = CleanControlBackend.Schemas.Room;
+
+#endregion
+
+namespace CleanControlBackend.Routes;
 
 public static class RoomsEndpoints {
-	public static void Map(WebApplication app) {
+	public static void Map(WebApplication app, CleancontrolContext db) {
 		var group = app.MapGroup("/rooms");
 
-		group.MapRoomsApi()
-			 .MapGroup("/refills")
-			 .MapRoomRefillsApi()
-			 .WithOpenApi()
-			 .WithTags("Room refills");
+		group.MapRoomsApi(db).MapGroup("/refills").MapRoomRefillsApi(db).WithOpenApi().WithTags("Room refills");
 
-		group.MapGroup("/tasks")
-			 .MapRoomTasksApi()
-			 .WithOpenApi()
-			 .WithTags("Room tasks");
+		group.MapGroup("/tasks").MapRoomTasksApi(db).WithOpenApi().WithTags("Room tasks");
 	}
 
-	private static RouteGroupBuilder MapRoomsApi(this RouteGroupBuilder group) {
-		group.MapGet("/", () => TypedResults.Ok<IEnumerable<Schemas.Room>>(null));
-		group.MapPost("/", () => TypedResults.Ok<Schemas.Room>(null));
+	private static RouteGroupBuilder MapRoomsApi(this RouteGroupBuilder group, CleancontrolContext db) {
+		group
+		   .MapGet("/", () => TypedResults.Ok<IEnumerable<Room>>(null))
+		   .WithDescription("Fetches all rooms")
+		   .WithSummary("Get all rooms");
 
-		group.MapGet("/{id}", (int id) => TypedResults.Ok<Schemas.Room>(null));
-		group.MapPut("/{id}", (int id) => TypedResults.Ok<Schemas.Room>(null));
-		group.MapDelete("/{id}", (int id) => TypedResults.Ok());
+		group
+		   .MapPost("/", () => TypedResults.Ok<Room>(null))
+		   .WithDescription("Creates a new room")
+		   .WithSummary("Create a new room");
+
+		group
+		   .MapGet("/{id}", (int id) => TypedResults.Ok<Room>(null))
+		   .WithDescription("Fetches a room by its ID")
+		   .WithSummary("Get a room by ID");
+
+		group
+		   .MapPut("/{id}", (int id) => TypedResults.Ok<Room>(null))
+		   .WithDescription("Updates a room by its ID")
+		   .WithSummary("Update a room");
+
+		group
+		   .MapDelete("/{id}", (int id) => TypedResults.Ok())
+		   .WithDescription("Deletes a room by its ID")
+		   .WithSummary("Delete a room");
 
 		return group;
 	}
 
-	public static RouteGroupBuilder MapRoomRefillsApi(this RouteGroupBuilder group) {
-		group.MapGet("/", () => TypedResults.Ok<IEnumerable<Schemas.RoomRefill>>(null));
-		group.MapPost("/", () => TypedResults.Ok<Schemas.RoomRefill>(null));
+	public static RouteGroupBuilder MapRoomRefillsApi(this RouteGroupBuilder group, CleancontrolContext db) {
+		group
+		   .MapGet("/", () => TypedResults.Ok<IEnumerable<RoomRefill>>(null))
+		   .WithDescription("Fetches all room refills")
+		   .WithSummary("Get all room refills");
 
-		group.MapGet("/{id}", (int id) => TypedResults.Ok<Schemas.RoomRefill>(null));
-		group.MapPut("/{id}", (int id) => TypedResults.Ok<Schemas.RoomRefill>(null));
-		group.MapDelete("/{id}", (int id) => TypedResults.Ok());
+		group
+		   .MapPost("/", () => TypedResults.Ok<RoomRefill>(null))
+		   .WithDescription("Creates a new room refill")
+		   .WithSummary("Create a new room refill");
+
+		group
+		   .MapGet("/{id}", (int id) => TypedResults.Ok<RoomRefill>(null))
+		   .WithDescription("Fetches a room refill by its ID")
+		   .WithSummary("Get a room refill by ID");
+
+		group
+		   .MapPut("/{id}", (int id) => TypedResults.Ok<RoomRefill>(null))
+		   .WithDescription("Updates a room refill by its ID")
+		   .WithSummary("Update a room refill");
+
+		group
+		   .MapDelete("/{id}", (int id) => TypedResults.Ok())
+		   .WithDescription("Deletes a room refill by its ID")
+		   .WithSummary("Delete a room refill");
 
 		return group;
 	}
 
-	public static RouteGroupBuilder MapRoomTasksApi(this RouteGroupBuilder group) {
-		group.MapGet("/", () => TypedResults.Ok<IEnumerable<Schemas.CleaningTask>>(null));
-		group.MapPost("/", () => TypedResults.Ok<Schemas.CleaningTask>(null));
+	public static RouteGroupBuilder MapRoomTasksApi(this RouteGroupBuilder group, CleancontrolContext db) {
+		group
+		   .MapGet("/", () => TypedResults.Ok<IEnumerable<CleaningTask>>(null))
+		   .WithDescription("Fetches all room tasks")
+		   .WithSummary("Get all room tasks");
 
-		group.MapGet("/{id}", (int id) => TypedResults.Ok<Schemas.CleaningTask>(null));
-		group.MapPut("/{id}", (int id) => TypedResults.Ok<Schemas.CleaningTask>(null));
-		group.MapDelete("/{id}", (int id) => TypedResults.Ok<Schemas.CleaningTask>(null));
+		group
+		   .MapPost("/", () => TypedResults.Ok<CleaningTask>(null))
+		   .WithDescription("Creates a new room task")
+		   .WithSummary("Create a new room task");
+
+		group
+		   .MapGet("/{id}", (int id) => TypedResults.Ok<CleaningTask>(null))
+		   .WithDescription("Fetches a room task by its ID")
+		   .WithSummary("Get a room task by ID");
+
+		group
+		   .MapPut("/{id}", (int id) => TypedResults.Ok<CleaningTask>(null))
+		   .WithDescription("Updates a room task by its ID")
+		   .WithSummary("Update a room task");
+
+		group
+		   .MapDelete("/{id}", (int id) => TypedResults.Ok<CleaningTask>(null))
+		   .WithDescription("Deletes a room task by its ID")
+		   .WithSummary("Delete a room task");
 
 		return group;
 	}

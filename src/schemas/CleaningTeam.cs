@@ -1,3 +1,3 @@
-namespace cleancontrol_backend.Schemas;
+namespace CleanControlBackend.Schemas;
 
 public record CleaningTeam(Guid id, string name, IEnumerable<User> cleaners);
