@@ -30,8 +30,15 @@ public static class UsersEndpoints {
 		   .WithSummary("Get all users");
 
 		group
-		   .MapPost("/",Results<Created<User>, BadRequest> () => {
-							return TypedResults.Created<Schemas.User>("",null);
+		   .MapPost("/",Results<Created<User>, BadRequest> (User user) => {
+							var newUser = new CleanControlDb.User() {
+								Name = user.name,
+								Username = user.username,
+								Role = user.role.Value,
+								Password = "password",
+								Id = Guid.NewGuid()
+							};
+							return TypedResults.Created<User>("",null);
 						})
 		   .WithDescription("Creates a new user")
 		   .WithSummary("Create a new user");

@@ -1,5 +1,6 @@
 #region
 
+using System.ComponentModel.DataAnnotations;
 using cleancontrol_db;
 
 #endregion
@@ -13,7 +14,7 @@ namespace CleanControlBackend.Schemas;
 /// <param name="name">The name of the User.</param>
 /// <param name="username">The username of the User.</param>
 /// <param name="role">The role of the User in the system.</param>
-public record User(Guid id, string name, string username, Role? role);
+public record User(Guid? id, [Required] string name, [Required] string? username, [Required] Role? role);
 
 /// <summary>
 ///     Represents a User's login credentials.
