@@ -1,3 +1,7 @@
+
+using System.ComponentModel.DataAnnotations;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace CleanControlBackend.Schemas;
 
-public record RoomRefill(InventoryItem item, Room room, int quantity, DateTime refillTime);
+public record RoomRefill([SwaggerSchema(ReadOnly = true)] Product item, [SwaggerSchema(WriteOnly = true)] Guid? id,  [Required] int quantity);

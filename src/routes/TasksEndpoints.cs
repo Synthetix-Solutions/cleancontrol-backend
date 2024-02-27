@@ -1,6 +1,7 @@
 #region
 
 using CleanControlDb;
+using Microsoft.AspNetCore.Http.HttpResults;
 using CleaningTask = CleanControlBackend.Schemas.CleaningTask;
 
 #endregion
@@ -8,36 +9,56 @@ using CleaningTask = CleanControlBackend.Schemas.CleaningTask;
 namespace CleanControlBackend.Routes;
 
 public static class TasksEndpoints {
-	public static void Map(WebApplication app, CleancontrolContext db) {
-		app.MapGroup("/tasks").MapTasksApi(db).WithOpenApi().WithTags("Tasks");
+	public static void Map(WebApplication app) {
+		app.MapGroup("/tasks").MapTasksApi().WithOpenApi().WithTags("Tasks");
 	}
 
-	private static RouteGroupBuilder MapTasksApi(this RouteGroupBuilder group, CleancontrolContext db) {
+	private static RouteGroupBuilder MapTasksApi(this RouteGroupBuilder group) {
 		group
-		   .MapGet("/", () => TypedResults.Ok<CleaningTask[]>(null))
+		   .MapGet("/", GetAllTasks)
 		   .WithDescription("Fetches all tasks")
 		   .WithSummary("Get all tasks");
 
 		group
-		   .MapPost("/", () => TypedResults.Ok<CleaningTask>(null))
+		   .MapPost("/", AddTask)
 		   .WithDescription("Creates a new task")
 		   .WithSummary("Create a new task");
 
 		group
-		   .MapGet("/{id}", (int id) => TypedResults.Ok<CleaningTask>(null))
+		   .MapGet("/{id}", GetTask)
 		   .WithDescription("Fetches a task by its ID")
 		   .WithSummary("Get a task by ID");
 
 		group
-		   .MapPut("/{id}", (int id) => TypedResults.Ok<CleaningTask>(null))
+		   .MapPut("/{id}", UpdateTask)
 		   .WithDescription("Updates a task by its ID")
 		   .WithSummary("Update a task");
 
 		group
-		   .MapDelete("/{id}", (int id) => TypedResults.Ok())
+		   .MapDelete("/{id}", DeleteTask)
 		   .WithDescription("Deletes a task by its ID")
 		   .WithSummary("Delete a task");
 
 		return group;
+	}
+
+	private static Ok DeleteTask(Guid id) {
+		return TypedResults.Ok();
+	}
+
+	private static Ok<CleaningTask> UpdateTask(Guid id) {
+		return TypedResults.Ok<CleaningTask>(null);
+	}
+
+	private static Ok<CleaningTask> GetTask(Guid id) {
+		return TypedResults.Ok<CleaningTask>(null);
+	}
+
+	private static Ok<CleaningTask> AddTask() {
+		return TypedResults.Ok<CleaningTask>(null);
+	}
+
+	private static Ok<CleaningTask[]> GetAllTasks() {
+		return TypedResults.Ok<CleaningTask[]>(null);
 	}
 }

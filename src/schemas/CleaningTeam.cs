@@ -1,3 +1,4 @@
+using Swashbuckle.AspNetCore.Annotations;
 namespace CleanControlBackend.Schemas;
 
-public record CleaningTeam(Guid id, string name, IEnumerable<User> cleaners);
+public record CleaningTeam([SwaggerSchema(ReadOnly = true)] Guid id, string name, IEnumerable<User> cleaners);
