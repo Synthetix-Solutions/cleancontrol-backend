@@ -13,14 +13,14 @@
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2"/>
-		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.2" />
+		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.2"/>
 		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.2"/>
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.2">
-		  <PrivateAssets>all</PrivateAssets>
-		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0"/>
-		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore.Annotations" Version="6.5.0"/>
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.5.0"/>
 		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.5.0"/>
 	</ItemGroup>
@@ -38,6 +38,6 @@
 		<GenerateDocumentationFile>true</GenerateDocumentationFile>
 	</PropertyGroup>
 	<Target Name="OpenAPI" AfterTargets="Build" Condition="$(Configuration)=='Debug'">
-		<Exec Command="dotnet swagger tofile --output ../../../openapi.json $(TargetPath) v1" WorkingDirectory="$(TargetDir)" />
+		<Exec Command="dotnet swagger tofile --output ../../../openapi.json $(TargetPath) v1" WorkingDirectory="$(TargetDir)"/>
 	</Target>
 </Project>

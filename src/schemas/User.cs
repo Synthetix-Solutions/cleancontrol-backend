@@ -16,8 +16,14 @@ namespace CleanControlBackend.Schemas;
 /// <param name="username">The username of the User.</param>
 /// <param name="role">The role of the User in the system.</param>
 /// <param name="password">Password of the User</param>
-/// <param name="isAdUser"><see langword="true"/>, if User is an AD user</param>
-public record User(Guid? id, [Required] string name, [Required] string? username, [Required] Role? role, [SwaggerSchema(WriteOnly = true)] string? password, [Required] bool? isAdUser);
+/// <param name="isAdUser"><see langword="true" />, if User is an AD user</param>
+public record User(Guid? id
+				 , [Required] string name
+				 , [Required] string? username
+				 , [Required] Role? role
+				 , [SwaggerSchema(WriteOnly = true)] string? password
+				 , [Required] bool? isAdUser
+);
 
 /// <summary>
 ///     Represents a User's login credentials.

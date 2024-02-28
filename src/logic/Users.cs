@@ -1,7 +1,6 @@
 #region
 
 using CleanControlDb;
-using Microsoft.EntityFrameworkCore;
 
 #endregion
 

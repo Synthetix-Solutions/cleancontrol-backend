@@ -683,6 +683,18 @@
         ],
         "summary": "Create a new room refill",
         "description": "Creates a new room refill",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -697,7 +709,7 @@
         }
       }
     },
-    "/rooms/refills/{id}": {
+    "/rooms/refills/{refillId}": {
       "get": {
         "tags": [
           "Room refills"
@@ -706,7 +718,17 @@
         "description": "Fetches a room refill by its ID",
         "parameters": [
           {
-            "name": "id",
+            "name": "roomId",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "refillId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -717,6 +739,9 @@
           }
         ],
         "responses": {
+          "404": {
+            "description": "Not Found"
+          },
           "200": {
             "description": "OK",
             "content": {
@@ -738,9 +763,9 @@
         "parameters": [
           {
             "name": "id",
-            "in": "path",
+            "in": "query",
             "required": true,
-            "style": "simple",
+            "style": "form",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -947,7 +972,7 @@
         }
       }
     },
-    "/rooms/{id}": {
+    "/rooms/{roomId}": {
       "get": {
         "tags": [
           "RoomsEndpoints"
@@ -956,9 +981,9 @@
         "parameters": [
           {
             "name": "id",
-            "in": "path",
+            "in": "query",
             "required": true,
-            "style": "simple",
+            "style": "form",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -988,9 +1013,9 @@
         "parameters": [
           {
             "name": "id",
-            "in": "path",
+            "in": "query",
             "required": true,
-            "style": "simple",
+            "style": "form",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -1030,9 +1055,9 @@
         "parameters": [
           {
             "name": "id",
-            "in": "path",
+            "in": "query",
             "required": true,
-            "style": "simple",
+            "style": "form",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -1482,7 +1507,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": { }
+        "additionalProperties": {}
       },
       "InfoRequest": {
         "type": "object",
@@ -1639,7 +1664,8 @@
           },
           "id": {
             "type": "string",
-            "format": "uuid"
+            "format": "uuid",
+            "nullable": true
           },
           "quantity": {
             "type": "integer",

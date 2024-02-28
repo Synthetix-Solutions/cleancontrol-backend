@@ -1,4 +1,8 @@
+#region
+
 using Swashbuckle.AspNetCore.Annotations;
+
+#endregion
 
 namespace CleanControlBackend.Schemas;
 
