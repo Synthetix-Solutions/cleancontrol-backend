@@ -1,5 +1,6 @@
 #region
 
+using CleanControlDb;
 using Microsoft.AspNetCore.Http.HttpResults;
 using CleaningTask = CleanControlBackend.Schemas.CleaningTask;
 
@@ -39,13 +40,46 @@ public static class TasksEndpoints {
 		return group;
 	}
 
-	private static Ok DeleteTask(Guid id) => TypedResults.Ok();
+	private static Results<Ok, ProblemHttpResult> DeleteTask(Guid taskId, CleancontrolContext db) {
+		var dbTask = db.CleaningTasks.Find(taskId);
+		if (dbTask is null)
+			return TypedResults.Problem($"Task with ID {taskId} not found", statusCode: StatusCodes.Status404NotFound);
 
-	private static Ok<CleaningTask> UpdateTask(Guid id) => TypedResults.Ok<CleaningTask>(null);
+		db.CleaningTasks.Remove(dbTask);
+		db.SaveChanges();
 
-	private static Ok<CleaningTask> GetTask(Guid id) => TypedResults.Ok<CleaningTask>(null);
+		return TypedResults.Ok();
+	}
 
-	private static Ok<CleaningTask> AddTask() => TypedResults.Ok<CleaningTask>(null);
+	private static Results<Ok<CleaningTask>, ProblemHttpResult> UpdateTask(Guid taskId, CleaningTask task, CleancontrolContext db) {
+		var dbTask = db.CleaningTasks.Find(taskId);
+		if (dbTask is null)
+			return TypedResults.Problem($"Task with ID {taskId} not found", statusCode: StatusCodes.Status404NotFound);
 
-	private static Ok<CleaningTask[]> GetAllTasks() => TypedResults.Ok<CleaningTask[]>(null);
+		(_, dbTask.Name, dbTask.Description, dbTask.RecurrenceInterval, dbTask.OnCheckout) = task;
+
+		db.SaveChanges();
+		return TypedResults.Ok<CleaningTask>(null);
+	}
+
+	private static Results<Ok<CleaningTask>, ProblemHttpResult> GetTask(Guid id, CleancontrolContext db) {
+		var dbTask = db.CleaningTasks.Find(id);
+		if (dbTask is null)
+			return TypedResults.Problem($"Task with ID {id} not found", statusCode: StatusCodes.Status404NotFound);
+
+		var returnTask = new CleaningTask(dbTask.Id, dbTask.Name, dbTask.Description, dbTask.RecurrenceInterval, dbTask.OnCheckout);
+
+		return TypedResults.Ok(returnTask);
+	}
+
+	private static Ok<CleaningTask> AddTask(CleaningTask task, CleancontrolContext db) {
+		var dbTask = new CleanControlDb.CleaningTask() { Name = task.name, Description = task.description, RecurrenceInterval = task.recurrenceInterval, OnCheckout = task.onCheckout };
+
+		var returnTasks = CreateReturnTask(dbTask);
+		return TypedResults.Ok(returnTasks);
+	}
+
+	private static Ok<IEnumerable<CleaningTask>> GetAllTasks(CleancontrolContext db) => TypedResults.Ok( db.CleaningTasks.Select(CreateReturnTask));
+	private static CleaningTask CreateReturnTask(CleanControlDb.CleaningTask dbTask) => new(dbTask.Id, dbTask.Name, dbTask.Description, dbTask.RecurrenceInterval, dbTask.OnCheckout);
+
 }

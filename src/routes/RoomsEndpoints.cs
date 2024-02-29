@@ -89,7 +89,7 @@ public static class RoomsEndpoints {
 		if (db.Rooms.FirstOrDefault(r => r.Number == room.roomNumber) is not null)
 			return TypedResults.Conflict();
 
-		var dbRoom = new CleanControlDb.Room { Number = room.roomNumber };
+		var dbRoom = new CleanControlDb.Room { Number = room.roomNumber, };
 		db.Rooms.Add(dbRoom);
 
 		var returnRoom = new Room(dbRoom.Id, dbRoom.Number);
@@ -149,7 +149,6 @@ public static class RoomsEndpoints {
 													, dbRefill.RoomProduct.Product.Name
 													, dbRefill.RoomProduct.Product.InventoryQuantity
 													 )
-										, null
 										, dbRefill.Amount
 										 );
 
@@ -162,16 +161,17 @@ public static class RoomsEndpoints {
 			return TypedResults.Problem("Room with ID '{roomId}' not found.", statusCode: StatusCodes.Status404NotFound);
 
 		try {
-			RoomProductRefill refillSelector(RoomRefill r) {
-				var product = db.Products.Find(r.id) ?? throw new InvalidOperationException($"Product with ID '{r.id}' not found.");
+			var refillSelector = (RoomRefill r) => {
+									 var product = db.Products.Find(r.id)
+												?? throw new InvalidOperationException($"Product with ID '{r.id}' not found.");
 
-				var roomProduct = db.RoomProducts.FirstOrDefault(rp => rp.Room == room && rp.Product == product)
-							   ?? throw new InvalidOperationException(
-																	  $"Room product association for room ID '{r.id}' and product ID '{product.Id}' not found."
-																	 );
+									 var roomProduct = db.RoomProducts.FirstOrDefault(rp => rp.Room == room && rp.Product == product)
+													?? throw new InvalidOperationException(
+																						   $"Room product association for room ID '{r.id}' and product ID '{product.Id}' not found."
+																						  );
 
-				return new RoomProductRefill { RoomProduct = roomProduct, Amount = r.quantity, Date = DateTime.Now };
-			}
+									 return new RoomProductRefill { RoomProduct = roomProduct, Amount = r.quantity, Date = DateTime.UtcNow };
+								 };
 
 			var dbRefills = refills.Select(refillSelector);
 			db.RoomProductStockRefills.AddRange(dbRefills);
@@ -192,7 +192,6 @@ public static class RoomsEndpoints {
 																					  , r.RoomProduct.Product.Name
 																					  , r.RoomProduct.Product.InventoryQuantity
 																					   )
-																		  , null
 																		  , r.Amount
 																		   )
 													   );
@@ -226,7 +225,7 @@ public static class RoomsEndpoints {
 		if (cleaningTask is null)
 			return TypedResults.Problem($"Cleaning task with ID '{taskId}' not found.", statusCode: StatusCodes.Status404NotFound);
 
-		var roomCleanup = new RoomCleanup { CleaningTask = cleaningTask, Room = room, Date = DateTime.Now };
+		var roomCleanup = new RoomCleanup { CleaningTask = cleaningTask, Room = room, Date = DateTime.UtcNow };
 		db.RoomCleanups.Add(roomCleanup);
 		db.SaveChanges();
 
@@ -246,7 +245,9 @@ public static class RoomsEndpoints {
 		if (room is null)
 			return TypedResults.Problem("Room with ID '{roomId}' not found.", statusCode: StatusCodes.Status404NotFound);
 
-		var tasks = room.CleaningTasks.Where(ct => ct.GetNextDueDate() <= DateOnly.FromDateTime(DateTime.Now));
+		var dbTasks = room.CleaningTasks.Where(ct => ct.GetNextDueDate() <= DateOnly.FromDateTime(DateTime.UtcNow));
+		var tasks = dbTasks.Select(CreateReturnRoomCleaningTask);
+
 		return TypedResults.Ok(tasks);
 	}
 

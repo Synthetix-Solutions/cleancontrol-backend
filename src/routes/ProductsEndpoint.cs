@@ -40,16 +40,65 @@ public static class ProductsEndpoints {
 		return group;
 	}
 
-	private static Ok<Product> DeleteProduct(Guid id) => TypedResults.Ok<Product>(null);
+	private static Results<Ok, ProblemHttpResult> DeleteProduct(Guid id, CleancontrolContext db) {
+		var dbProduct = db.Products.Find(id);
+		if (dbProduct is null)
+			return TypedResults.Problem($"Product with ID {id} not found", statusCode: StatusCodes.Status404NotFound);
 
-	private static Ok<Product> UpdateProduct(Guid id) => TypedResults.Ok<Product>(null);
+		db.Products.Remove(dbProduct);
+		db.SaveChanges();
+		return TypedResults.Ok();
+	}
 
-	private static Ok<Product> GetProduct(Guid id) => TypedResults.Ok<Product>(null);
+	private static Results<Ok<Product>, ProblemHttpResult> UpdateProduct(Guid id, Product product, CleancontrolContext db) {
+		var dbProduct = db.Products.Find(id);
+		if (dbProduct is null)
+			return TypedResults.Problem($"Product with ID {id} not found", statusCode: StatusCodes.Status404NotFound);
 
-	private static Ok<Product> CreateProduct() => TypedResults.Ok<Product>(null);
+		dbProduct.Name = product.name;
+		dbProduct.InventoryQuantity = product.inventoryQuantity;
+
+		var returnProduct = new Product(
+										dbProduct.Id
+									  , dbProduct.Name
+									  , dbProduct.InventoryQuantity
+									  , dbProduct.Image
+									   );
+		return TypedResults.Ok<Product>(returnProduct);
+	}
+
+	private static Results<ProblemHttpResult, Ok<Product>> GetProduct(Guid id, CleancontrolContext db) {
+		var dbProduct = db.Products.Find(id);
+		if (dbProduct is null)
+			return TypedResults.Problem($"Product with ID {id} not found", statusCode: StatusCodes.Status404NotFound);
+
+		return TypedResults.Ok<Product>(null);
+	}
+
+	private static Ok<Product> CreateProduct(Product product, CleancontrolContext db) {
+		var dbProduct = new CleanControlDb.Product { Name = product.name, InventoryQuantity = product.inventoryQuantity, Image = product.image };
+		db.Products.Add(dbProduct);
+
+		var returnProduct = new Product(
+										dbProduct.Id
+									  , dbProduct.Name
+									  , dbProduct.InventoryQuantity
+									  , dbProduct.Image
+									   );
+		db.SaveChanges();
+
+		return TypedResults.Ok<Product>(returnProduct);
+	}
 
 	private static Ok<IEnumerable<Product>> GetAllProducts(CleancontrolContext db) {
-		var dbProducts = db.Products;
-		return TypedResults.Ok<IEnumerable<Product>>(null);
+		var products = db.Products.Select(
+										  product => new Product(
+																 product.Id
+															   , product.Name
+															   , product.InventoryQuantity
+															   , product.Image
+																)
+										 );
+		return TypedResults.Ok<IEnumerable<Product>>(products);
 	}
 }

@@ -23,7 +23,9 @@ public record User(Guid? id
 				 , [Required] Role? role
 				 , [SwaggerSchema(WriteOnly = true)] string? password
 				 , [Required] bool? isAdUser
-);
+) {
+	public User(Guid id, string name, string username) : this(id, name, username, null, null, null) { }
+};
 
 /// <summary>
 ///     Represents a User's login credentials.

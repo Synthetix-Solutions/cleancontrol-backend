@@ -407,6 +407,16 @@
         ],
         "summary": "Create a new cleaning run",
         "description": "Creates a new cleaning run",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CleaningRun"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -453,37 +463,6 @@
           }
         }
       },
-      "put": {
-        "tags": [
-          "Cleaning runs"
-        ],
-        "summary": "Update a cleaning run",
-        "description": "Updates a cleaning run by its ID",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "style": "simple",
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CleaningRun"
-                }
-              }
-            }
-          }
-        }
-      },
       "delete": {
         "tags": [
           "Cleaning runs"
@@ -504,14 +483,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CleaningRun"
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -545,6 +517,16 @@
         ],
         "summary": "Create a new product",
         "description": "Creates a new product",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -609,6 +591,16 @@
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Product"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -642,14 +634,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Product"
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -697,14 +682,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RoomRefill"
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -789,6 +767,18 @@
         ],
         "summary": "Get all room tasks",
         "description": "Fetches all room tasks",
+        "parameters": [
+          {
+            "name": "roomId",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -799,25 +789,6 @@
                   "items": {
                     "$ref": "#/components/schemas/CleaningTask"
                   }
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Room tasks"
-        ],
-        "summary": "Create a new room task",
-        "description": "Creates a new room task",
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CleaningTask"
                 }
               }
             }
@@ -834,41 +805,20 @@
         "description": "Fetches a room task by its ID",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
+            "name": "taskId",
+            "in": "query",
             "required": true,
-            "style": "simple",
+            "style": "form",
             "schema": {
               "type": "string",
               "format": "uuid"
             }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CleaningTask"
-                }
-              }
-            }
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "Room tasks"
-        ],
-        "summary": "Update a room task",
-        "description": "Updates a room task by its ID",
-        "parameters": [
+          },
           {
-            "name": "id",
-            "in": "path",
+            "name": "roomId",
+            "in": "query",
             "required": true,
-            "style": "simple",
+            "style": "form",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -896,10 +846,20 @@
         "description": "Deletes a room task by its ID",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
+            "name": "roomId",
+            "in": "query",
             "required": true,
-            "style": "simple",
+            "style": "form",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "taskId",
+            "in": "query",
+            "required": true,
+            "style": "form",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -908,14 +868,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CleaningTask"
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -1103,6 +1056,16 @@
         ],
         "summary": "Create a new task",
         "description": "Creates a new task",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CleaningTask"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -1157,16 +1120,26 @@
         "description": "Updates a task by its ID",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
+            "name": "taskId",
+            "in": "query",
             "required": true,
-            "style": "simple",
+            "style": "form",
             "schema": {
               "type": "string",
               "format": "uuid"
             }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CleaningTask"
+              }
+            }
+          },
+          "required": true
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -1188,10 +1161,10 @@
         "description": "Deletes a task by its ID",
         "parameters": [
           {
-            "name": "id",
-            "in": "path",
+            "name": "taskId",
+            "in": "query",
             "required": true,
-            "style": "simple",
+            "style": "form",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -1406,11 +1379,28 @@
             "type": "string",
             "format": "date-time"
           },
-          "cleaningTeam": {
-            "$ref": "#/components/schemas/CleaningTeam"
+          "cleaners": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            },
+            "nullable": true
+          },
+          "cleanerIds": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "nullable": true
           },
           "startingRoom": {
             "$ref": "#/components/schemas/Room"
+          },
+          "startingRoomId": {
+            "type": "string",
+            "format": "uuid",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1437,27 +1427,6 @@
           },
           "onCheckout": {
             "type": "boolean"
-          }
-        },
-        "additionalProperties": false
-      },
-      "CleaningTeam": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "name": {
-            "type": "string",
-            "nullable": true
-          },
-          "cleaners": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/User"
-            },
-            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1507,7 +1476,7 @@
             "nullable": true
           }
         },
-        "additionalProperties": {}
+        "additionalProperties": { }
       },
       "InfoRequest": {
         "type": "object",
@@ -1576,6 +1545,11 @@
           "inventoryQuantity": {
             "type": "integer",
             "format": "int32"
+          },
+          "image": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
           }
         },
         "additionalProperties": false
