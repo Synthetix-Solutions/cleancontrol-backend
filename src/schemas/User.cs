@@ -1,7 +1,7 @@
 #region
 
 using System.ComponentModel.DataAnnotations;
-using cleancontrol_db;
+using CleanControlDb;
 using Swashbuckle.AspNetCore.Annotations;
 
 #endregion

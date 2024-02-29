@@ -98,7 +98,7 @@ public static class RoomsEndpoints {
 		return TypedResults.CreatedAtRoute(
 										   returnRoom
 										 , "GetRoom"
-										 , new { id = dbRoom.Id }
+										 , new { roomId = dbRoom.Id }
 										  );
 	}
 
