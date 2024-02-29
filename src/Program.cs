@@ -79,8 +79,8 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment()) {
 	app.UseExceptionHandler();
 	app.UseStatusCodePages();
-	app.UseCors(allowAllPolicyName);
 }
+app.UseCors(allowAllPolicyName);
 
 app
    .UseSwagger()
