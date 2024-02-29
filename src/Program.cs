@@ -52,6 +52,8 @@ builder.Services
 
 var app = builder.Build();
 
+app.UseCors("lala");
+
 app.UseSwagger()
    .UseSwaggerUI();
 
