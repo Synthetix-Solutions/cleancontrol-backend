@@ -1,10 +1,11 @@
 #region
 
 using System.Collections.Immutable;
+using CleanControlBackend.Schemas;
 using CleanControlDb;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using CleaningRun = CleanControlBackend.Schemas.CleaningRun;
+using Room = CleanControlBackend.Schemas.Room;
 
 #endregion
 
@@ -12,29 +13,34 @@ namespace CleanControlBackend.Routes;
 
 public static class CleaningRunsEndpoints {
 	public static void Map(WebApplication app) {
-		app.MapGroup("/cleaning_runs")
+		app
+		   .MapGroup("/cleaning_runs")
 		   .MapCleaningRunsApi()
 		   .WithOpenApi()
 		   .WithTags("Cleaning runs");
 	}
 
 	private static RouteGroupBuilder MapCleaningRunsApi(this RouteGroupBuilder group) {
-		group.MapGet("/", GetAllProducts)
-			 .WithDescription("Fetches all cleaning runs")
-			 .WithSummary("Get all cleaning runs");
+		group
+		   .MapGet("/", GetAllProducts)
+		   .WithDescription("Fetches all cleaning runs")
+		   .WithSummary("Get all cleaning runs");
 
-		group.MapPost("/", CreateCleaningRun)
-			 .WithDescription("Creates a new cleaning run")
-			 .WithSummary("Create a new cleaning run");
+		group
+		   .MapPost("/", CreateCleaningRun)
+		   .WithDescription("Creates a new cleaning run")
+		   .WithSummary("Create a new cleaning run");
 
-		group.MapGet("/{id}", GetCleaningRun)
-			 .WithDescription("Fetches a cleaning run by its ID")
-			 .WithSummary("Get a cleaning run by ID");
+		group
+		   .MapGet("/{id}", GetCleaningRun)
+		   .WithDescription("Fetches a cleaning run by its ID")
+		   .WithSummary("Get a cleaning run by ID");
 
 
-		group.MapDelete("/{id}", DeleteCleaningRun)
-			 .WithDescription("Deletes a cleaning run by its ID")
-			 .WithSummary("Delete a cleaning run");
+		group
+		   .MapDelete("/{id}", DeleteCleaningRun)
+		   .WithDescription("Deletes a cleaning run by its ID")
+		   .WithSummary("Delete a cleaning run");
 
 		return group;
 	}
@@ -63,13 +69,13 @@ public static class CleaningRunsEndpoints {
 		return new CleaningRun(
 							   dbCleaningRun.Id
 							 , dbCleaningRun.Date
-							 , new Schemas.Room(dbCleaningRun.StartingRoom.Id, dbCleaningRun.StartingRoom.Number)
+							 , new Room(dbCleaningRun.StartingRoom.Id, dbCleaningRun.StartingRoom.Number)
 							 , dbCleaningRun.Cleaners.Select(
-															 u => new Schemas.User(
-																				   u.Id
-																				 , u.Name
-																				 , u.Username
-																				  )
+															 u => new User(
+																		   u.Id
+																		 , u.Name
+																		 , u.Email
+																		  )
 															)
 							  );
 	}
@@ -82,18 +88,21 @@ public static class CleaningRunsEndpoints {
 		if (cleaningRun.cleanerIds is null)
 			return TypedResults.Problem("CleanerIds cannot be null", statusCode: StatusCodes.Status400BadRequest);
 
-		var cleaners = cleaningRun.cleanerIds.Select(g => db.Users.Find(g)).ToImmutableArray();
+		var cleaners = cleaningRun
+					  .cleanerIds
+					  .Select(g => db.Users.Find(g))
+					  .ToImmutableArray();
 		if (cleaners.Any(c => c is null))
 			return TypedResults.Problem("One or more cleaner IDs not found", statusCode: StatusCodes.Status404NotFound);
 
 		var dbCleaningRun = new CleanControlDb.CleaningRun { Date = cleaningRun.date, Cleaners = cleaners, StartingRoom = startingRoom };
 
-		return TypedResults.Ok<CleaningRun>(GetReturnCleaningRun(dbCleaningRun));
+		return TypedResults.Ok(GetReturnCleaningRun(dbCleaningRun));
 	}
 
 	private static Ok<IEnumerable<CleaningRun>> GetAllProducts(CleancontrolContext db) {
 		var cleaningRuns = db.CleaningRuns.Select(GetReturnCleaningRun);
 
-		return TypedResults.Ok<IEnumerable<CleaningRun>>(cleaningRuns);
+		return TypedResults.Ok(cleaningRuns);
 	}
 }

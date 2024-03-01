@@ -1,8 +1,10 @@
 #region
 
-using CleanControlBackend.Logic;
+using System.Security.Claims;
+using CleanControlBackend.Schemas;
 using CleanControlDb;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using User = CleanControlBackend.Schemas.User;
 
 #endregion
@@ -11,7 +13,9 @@ namespace CleanControlBackend.Routes;
 
 public static class UsersEndpoints {
 	public static void Map(WebApplication app) {
-		app.MapGroup("/users")
+		app
+		   .MapGroup("/users")
+		   .RequireAuthorization(Policies.AdminOrCleanerOnly)
 		   .MapUserApi()
 		   .WithOpenApi()
 		   .WithTags("Users");
@@ -19,27 +23,31 @@ public static class UsersEndpoints {
 
 	public static RouteGroupBuilder MapUserApi(this RouteGroupBuilder group) {
 		// Implement your logic to fetch all users here
-		group.MapGet("/", GetAllUsers)
-			 .WithDescription("Fetches all users")
-			 .WithSummary("Get all users");
-		group.MapGet("/{id:guid}", GetUser)
-			 .WithDescription("Fetches a user by its ID")
-			 .WithSummary("Get a user by ID")
-			 .WithName("GetUserById");
-		group.MapPost("/", CreateUser)
-			 .WithDescription("Creates a new user")
-			 .WithSummary("Create a new user");
-		group.MapPut("/{id:guid}", UpdateUser)
-			 .WithDescription("Updates a user by its ID")
-			 .WithSummary("Update a user");
-		group.MapDelete("/{id:guid}", DeleteUser)
-			 .WithDescription("Deletes a user by its ID")
-			 .WithSummary("Delete a user");
+		group
+		   .MapGet("/", GetAllUsers)
+		   .RequireAuthorization(Policies.AdminOnly)
+		   .WithDescription("Fetches all users")
+		   .WithSummary("Get all users");
+		group
+		   .MapGet("/{id}", GetUser)
+		   .WithDescription("Fetches a user by its ID")
+		   .WithSummary("Get a user by ID")
+		   .WithName("GetUserById");
+		group
+		   .MapPut("/{id}", UpdateUser)
+		   .RequireAuthorization(Policies.AdminOnly)
+		   .WithDescription("Updates a user by its ID")
+		   .WithSummary("Update a user");
+		group
+		   .MapDelete("/{id}", DeleteUser)
+		   .RequireAuthorization(Policies.AdminOnly)
+		   .WithDescription("Deletes a user by its ID")
+		   .WithSummary("Delete a user");
 
 		return group;
 	}
 
-	private static Results<Ok, NotFound> DeleteUser(Guid id, CleancontrolContext db) {
+	private static Results<Ok, NotFound> DeleteUser(string id, CleancontrolContext db) {
 		var dbUser = db.Users.Find(id);
 		if (dbUser is null)
 			return TypedResults.NotFound();
@@ -49,95 +57,73 @@ public static class UsersEndpoints {
 		return TypedResults.Ok();
 	}
 
-	private static Results<Ok<User>, NotFound> UpdateUser(Guid id, User user, CleancontrolContext db) {
-		var dbUser = db.Users.Find(id);
+	private static async Task<Results<Ok<User>, ProblemHttpResult, NotFound>> UpdateUser(string id
+																					   , User user
+																					   , CleancontrolContext db
+																					   , UserManager<CleanControlUser> userManager
+																					   , ClaimsPrincipal currentUser
+	) {
+		var dbUser = await db.Users.FindAsync(id);
 		if (dbUser is null)
-			return TypedResults.NotFound();
+			return TypedResults.Problem($"User with ID {id} not found", statusCode: StatusCodes.Status404NotFound);
 
-		dbUser.Name = user.name;
-		dbUser.Role = user.role!.Value;
 		dbUser.IsAdUser = user.isAdUser!.Value;
+		dbUser.Name = user.name;
+
+		var claim = new Claim(ClaimTypes.Role, user.role.ToString()!);
+		await userManager.ReplaceClaimAsync(
+											dbUser
+										  , claim
+										  , claim
+										   );
+
+
+		await db.SaveChangesAsync();
+
+		var role = await GetRoleForUser(userManager, dbUser);
 
 		var returnUser = new User(
 								  dbUser.Id
 								, dbUser.Name
-								, dbUser.Username
-								, dbUser.Role
-								, null
+								, dbUser.Email!
+								, role
 								, dbUser.IsAdUser
 								 );
-
-		db.SaveChanges();
 		return TypedResults.Ok(returnUser);
 	}
 
-	private static Results<CreatedAtRoute<User>, BadRequest> CreateUser(HttpContext context
-																	  , LinkGenerator linkGenerator
-																	  , User user
-																	  , CleancontrolContext db
-	) {
-		var newUser = new CleanControlDb.User {
-												  Name = user.name
-												, Username = user.username
-												, Role = user.role.Value
-												, Password = user.password
-												, Id = Guid.NewGuid()
-												, IsAdUser = user.isAdUser.Value
-											  };
-		db.Users.Add(newUser);
-
-		// Generate a link to the newly created user
-		var customerLink = linkGenerator.GetUriByName(
-													  context
-													, "GetUserById"
-													, new { id = newUser.Id }
-													 );
-
-		var returnUser = new User(
-								  newUser.Id
-								, newUser.Name
-								, newUser.Username
-								, newUser.Role
-								, null
-								, newUser.IsAdUser
-								 );
-
-		db.SaveChanges();
-		return TypedResults.CreatedAtRoute(
-										   returnUser
-										 , "GetUserById"
-										 , returnUser.id
-										  );
+	private static async Task<CleanControlDb.Role> GetRoleForUser(UserManager<CleanControlUser> userManager, CleanControlUser dbUser) {
+		var role = (await userManager.GetClaimsAsync(dbUser)).First(c => c.Type == ClaimTypes.Role)
+															 .Value;
+		return Enum.Parse<CleanControlDb.Role>(role);
 	}
 
-	private static Results<Ok<User>, NotFound> GetUser(Guid id, CleancontrolContext db) {
-		var dbUser = db.Users.Find(id);
+	private static async Task<Results<Ok<User>, NotFound>> GetUser(string id, CleancontrolContext db, UserManager<CleanControlUser> userManager) {
+		var dbUser = await db.Users.FindAsync(id);
 		if (dbUser is null)
 			return TypedResults.NotFound();
 
 		var user = new User(
 							dbUser.Id
 						  , dbUser.Name
-						  , dbUser.Username
-						  , dbUser.Role
-						  , null
+						  , dbUser.Email
+						  , await GetRoleForUser(userManager, dbUser)
 						  , dbUser.IsAdUser
 						   );
 		return TypedResults.Ok(user);
 	}
 
-	private static Ok<IEnumerable<User>> GetAllUsers(CleancontrolContext db) {
-		var dbUsers = Users.GetAllUsers(db);
+	private static Ok<IEnumerable<User>> GetAllUsers(CleancontrolContext db,UserManager<CleanControlUser> userManager) {
+		var dbUsers = db.Users;
 		var users = dbUsers.Select(
 								   u => new User(
 												 u.Id
 											   , u.Name
-											   , u.Username
-											   , u.Role
-											   , u.Password
+											   , u.Email
+											   , GetRoleForUser(userManager, u).Result
 											   , u.IsAdUser
 												)
 								  );
-		return TypedResults.Ok(users);
+		return TypedResults.Ok(users.AsEnumerable());
 	}
 }

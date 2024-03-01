@@ -2,10 +2,11 @@
 
 using System.Reflection;
 using System.Text.Json.Serialization;
+using CleanControlBackend;
 using CleanControlBackend.Routes;
+using CleanControlBackend.Schemas;
 using CleanControlDb;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.OpenApi.Models;
@@ -64,14 +65,14 @@ builder
 
 var dataSourceBuilder = new NpgsqlDataSourceBuilder(builder.Configuration.GetConnectionString("CleanControl"));
 
-dataSourceBuilder.MapEnum<CleanControlDb.Role>();
+dataSourceBuilder.MapEnum<Role>();
 var dataSource = dataSourceBuilder.Build();
 
 builder
    .Services
    .AddDbContext<CleancontrolContext>(OptionsBuilder)
-   .AddAuthorization()
-   .AddIdentityApiEndpoints<IdentityUser>()
+   .AddAuthorization(Policies.AddPolicies)
+   .AddIdentityApiEndpoints<CleanControlUser>()
    .AddEntityFrameworkStores<CleancontrolContext>();
 
 var app = builder.Build();
@@ -87,15 +88,9 @@ app
    .UseSwaggerUI();
 
 app.UseHttpsRedirection();
-app.MapIdentityApi<IdentityUser>();
+app.MapIdentityApi<CleanControlUser>();
 
-IEnumerable<Action<WebApplication>> mappers = [
-												  UsersEndpoints.Map
-												, ProductsEndpoints.Map
-												, TasksEndpoints.Map
-												, CleaningRunsEndpoints.Map
-												, RoomsEndpoints.Map
-											  ];
+IEnumerable<Action<WebApplication>> mappers = [ProductsEndpoints.Map, TasksEndpoints.Map, CleaningRunsEndpoints.Map, RoomsEndpoints.Map];
 
 foreach (var mapper in mappers)
 	mapper(app);
