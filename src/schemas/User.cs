@@ -1,6 +1,7 @@
 #region
 
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics.CodeAnalysis;
 using CleanControlDb;
 
 #endregion
@@ -15,12 +16,10 @@ namespace CleanControlBackend.Schemas;
 /// <param name="username">The username of the User.</param>
 /// <param name="role">The role of the User in the system.</param>
 /// <param name="isAdUser"><see langword="true" />, if User is an AD user</param>
-public record User(string? id, [Required] string name, [Required] string username, [Required] Role? role, [Required] bool? isAdUser) {
-	public User(string id, string name, string username) : this(
-																id
-															  , name
-															  , null
-															  , null
-															  , null
-															   ) { }
-}
+[SuppressMessage("ReSharper", "InconsistentNaming")]
+public record User(string? id
+				 , [Required] string name
+				 , [Required] string? username = null
+				 , [Required] Role? role = null
+				 , [Required] bool? isAdUser = null
+);

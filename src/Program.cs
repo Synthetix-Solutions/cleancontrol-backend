@@ -2,10 +2,10 @@
 
 using System.Reflection;
 using System.Text.Json.Serialization;
-using CleanControlBackend;
 using CleanControlBackend.Routes;
 using CleanControlBackend.Schemas;
 using CleanControlDb;
+using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
@@ -25,6 +25,7 @@ const string allowAllPolicyName = "AllowAll";
 
 builder
    .Services
+   .AddValidatorsFromAssemblyContaining<Program>()
    .AddCors(
 			o => o.AddPolicy(
 							 allowAllPolicyName
@@ -81,6 +82,7 @@ if (!app.Environment.IsDevelopment()) {
 	app.UseExceptionHandler();
 	app.UseStatusCodePages();
 }
+
 app.UseCors(allowAllPolicyName);
 
 app
@@ -95,10 +97,8 @@ IEnumerable<Action<WebApplication>> mappers = [ProductsEndpoints.Map, TasksEndpo
 foreach (var mapper in mappers)
 	mapper(app);
 
-app
-   .MapGet("/tibsi/brain", StatusCodeHttpResult () => TypedResults.StatusCode(410))
-   .WithOpenApi();
-app.MapGet("/tibsi/dick", StatusCodeHttpResult () => TypedResults.StatusCode(416));
+app.MapGet("/tibsi/brain",  () => TypedResults.StatusCode(410));
+app.MapGet("/tibsi/dick",  () => TypedResults.StatusCode(416));
 
 app.Run();
 return;

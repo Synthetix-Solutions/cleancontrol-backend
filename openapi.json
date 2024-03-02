@@ -383,7 +383,7 @@
         "tags": [
           "Cleaning runs"
         ],
-        "summary": "Get all cleaning runs",
+        "summary": "Gets all cleaning runs",
         "description": "Fetches all cleaning runs",
         "responses": {
           "200": {
@@ -405,7 +405,7 @@
         "tags": [
           "Cleaning runs"
         ],
-        "summary": "Create a new cleaning run",
+        "summary": "Creates a new cleaning run",
         "description": "Creates a new cleaning run",
         "requestBody": {
           "content": {
@@ -431,16 +431,16 @@
         }
       }
     },
-    "/cleaning_runs/{id}": {
+    "/cleaning_runs/{cleaningRunId}": {
       "get": {
         "tags": [
           "Cleaning runs"
         ],
-        "summary": "Get a cleaning run by ID",
+        "summary": "Gets a cleaning run by its ID",
         "description": "Fetches a cleaning run by its ID",
         "parameters": [
           {
-            "name": "id",
+            "name": "cleaningRunId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -467,11 +467,11 @@
         "tags": [
           "Cleaning runs"
         ],
-        "summary": "Delete a cleaning run",
+        "summary": "Deletes a cleaning run by its ID",
         "description": "Deletes a cleaning run by its ID",
         "parameters": [
           {
-            "name": "id",
+            "name": "cleaningRunId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -541,7 +541,7 @@
         }
       }
     },
-    "/products/{id}": {
+    "/products/{productId}": {
       "get": {
         "tags": [
           "Products"
@@ -550,7 +550,7 @@
         "description": "Fetches a product by its ID",
         "parameters": [
           {
-            "name": "id",
+            "name": "productId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -581,7 +581,7 @@
         "description": "Updates a product by its ID",
         "parameters": [
           {
-            "name": "id",
+            "name": "productId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -622,7 +622,7 @@
         "description": "Deletes a product by its ID",
         "parameters": [
           {
-            "name": "id",
+            "name": "productId",
             "in": "path",
             "required": true,
             "style": "simple",
@@ -740,10 +740,10 @@
         "description": "Deletes a room refill by its ID",
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
+            "name": "refillId",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -796,7 +796,7 @@
         }
       }
     },
-    "/rooms/tasks/{id}": {
+    "/rooms/tasks/{roomId}": {
       "get": {
         "tags": [
           "Room tasks"
@@ -816,9 +816,9 @@
           },
           {
             "name": "roomId",
-            "in": "query",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -847,9 +847,9 @@
         "parameters": [
           {
             "name": "roomId",
-            "in": "query",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -876,7 +876,7 @@
     "/rooms": {
       "get": {
         "tags": [
-          "RoomsEndpoints"
+          "Rooms"
         ],
         "responses": {
           "200": {
@@ -896,7 +896,7 @@
       },
       "post": {
         "tags": [
-          "RoomsEndpoints"
+          "Rooms"
         ],
         "requestBody": {
           "content": {
@@ -928,15 +928,15 @@
     "/rooms/{roomId}": {
       "get": {
         "tags": [
-          "RoomsEndpoints"
+          "Rooms"
         ],
         "operationId": "GetRoom",
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
+            "name": "roomId",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -961,14 +961,14 @@
       },
       "put": {
         "tags": [
-          "RoomsEndpoints"
+          "Rooms"
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
+            "name": "roomId",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -1003,14 +1003,14 @@
       },
       "delete": {
         "tags": [
-          "RoomsEndpoints"
+          "Rooms"
         ],
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
+            "name": "roomId",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -1080,7 +1080,7 @@
         }
       }
     },
-    "/tasks/{id}": {
+    "/tasks/{taskId}": {
       "get": {
         "tags": [
           "Tasks"
@@ -1090,9 +1090,9 @@
         "parameters": [
           {
             "name": "id",
-            "in": "path",
+            "in": "query",
             "required": true,
-            "style": "simple",
+            "style": "form",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -1121,9 +1121,9 @@
         "parameters": [
           {
             "name": "taskId",
-            "in": "query",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -1162,9 +1162,9 @@
         "parameters": [
           {
             "name": "taskId",
-            "in": "query",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
