@@ -16,12 +16,15 @@ public static class CleaningRunsEndpoints {
 	/// </summary>
 	/// <param name="app"></param>
 	public static void Map(WebApplication app) {
-		app
-		   .MapGroup("/cleaning_runs")
-		   .MapCleaningRunsApi()		   .AddFluentValidationAutoValidation()
+		app.MapGroup("/cleaning_runs")
+		   .MapCleaningRunsApi()
+		   .AddFluentValidationAutoValidation()
 		   .WithOpenApi()
 		   .WithTags("Cleaning runs");
+
+
 	}
+
 
 	private static RouteGroupBuilder MapCleaningRunsApi(this RouteGroupBuilder group) {
 		group
@@ -43,6 +46,10 @@ public static class CleaningRunsEndpoints {
 		   .MapDelete("/{cleaningRunId:guid}", CleaningRuns.DeleteCleaningRun)
 		   .WithDescription("Deletes a cleaning run by its ID")
 		   .WithSummary("Delete a cleaning run");
+
+		group.MapGet("/{cleaningRunId:guid}/nextRoom", CleaningRuns.GetNextRoom)
+			.WithDescription("Fetches the next room to clean")
+			.WithSummary("Get the next room to clean");
 
 		return group;
 	}

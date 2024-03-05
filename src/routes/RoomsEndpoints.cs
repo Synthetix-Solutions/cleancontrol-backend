@@ -16,18 +16,23 @@ public static class RoomsEndpoints {
 	/// </summary>
 	/// <param name="app"></param>
 	public static void Map(WebApplication app) {
-		var group = app.MapGroup("/rooms");
+		var group = app.MapGroup("/rooms")
+		   .MapRoomsApi()
+		   .AddFluentValidationAutoValidation()
+		   .WithOpenApi()
+		   .WithTags("Rooms");
 
 		group
-		   .MapRoomsApi()
-		   .MapGroup("/refills")
-		   .MapRoomRefillsApi()		   .AddFluentValidationAutoValidation()
+		   .MapGroup("/{roomId:guid}/refills")
+		   .MapRoomRefillsApi()
+		   .AddFluentValidationAutoValidation()
 		   .WithOpenApi()
 		   .WithTags("Room refills");
 
 		group
-		   .MapGroup("/tasks")
-		   .MapRoomTasksApi()		   .AddFluentValidationAutoValidation()
+		   .MapGroup("/{roomId:guid}/tasks")
+		   .MapRoomTasksApi()
+		   .AddFluentValidationAutoValidation()
 		   .WithOpenApi()
 		   .WithTags("Room tasks");
 	}
@@ -44,12 +49,12 @@ public static class RoomsEndpoints {
 		   .WithSummary("Get all room tasks");
 
 		group
-		   .MapGet("/{roomId:guid}", Rooms.GetRoomTask)
+		   .MapGet("/{taskId:guid}", Rooms.GetRoomTask)
 		   .WithDescription("Fetches a room task by its ID")
 		   .WithSummary("Get a room task by ID");
 
 		group
-		   .MapDelete("/{roomId:guid}", Rooms.DeleteRoomTask)
+		   .MapDelete("/{taskId:guid}", Rooms.DeleteRoomTask)
 		   .WithDescription("Deletes a room task by its ID")
 		   .WithSummary("Delete a room task");
 

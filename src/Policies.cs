@@ -15,6 +15,7 @@ public static class Policies {
 	/// Only allow admin users
 	/// </summary>
 	public const string AdminOnly = "AdminOnly";
+
 	/// <summary>
 	/// Allow any admin or cleaner user
 	/// </summary>
@@ -25,14 +26,7 @@ public static class Policies {
 	/// </summary>
 	/// <param name="o">Options builder</param>
 	public static void AddPolicies(AuthorizationOptions o) {
-		o.AddPolicy(AdminOnly, p => p.RequireClaim(ClaimTypes.Role, Role.Admin.ToString()));
-		o.AddPolicy(
-					AdminOrCleanerOnly
-				  , p => p.RequireClaim(
-										ClaimTypes.Role
-									  , Role.Admin.ToString()
-									  , Role.Cleaner.ToString()
-									   )
-				   );
+		o.AddPolicy(AdminOnly, p => p.RequireRole(Role.Admin.ToString()));
+		o.AddPolicy(AdminOrCleanerOnly, p => p.RequireRole(Role.Admin.ToString(), Role.Cleaner.ToString()));
 	}
 }

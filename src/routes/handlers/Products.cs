@@ -27,6 +27,8 @@ public static class Products {
 		dbProduct.Name = product.name;
 		dbProduct.InventoryQuantity = product.inventoryQuantity;
 
+		db.SaveChanges();
+
 		var returnProduct = new Product(
 										dbProduct.Id
 									  , dbProduct.Name

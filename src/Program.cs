@@ -42,20 +42,13 @@ builder
 					  options.SwaggerDoc(
 										 "v1"
 									   , new OpenApiInfo {
-															 Version = "v1"
-														   , Title = "ToDo API"
-														   , Description = "An ASP.NET Core Web API for managing ToDo items"
-														   , TermsOfService = new Uri("https://example.com/terms")
-														   , Contact
-																 = new OpenApiContact {
-																						  Name = "Example Contact"
-																						, Url = new Uri("https://example.com/contact")
-																					  }
-														   , License = new OpenApiLicense {
-																							  Name = "Example License"
-																							, Url = new Uri("https://example.com/license")
-																						  }
-														 }
+											 Version = "v1"
+										   , Title = "ToDo API"
+										   , Description = "An ASP.NET Core Web API for managing ToDo items"
+										   , TermsOfService = new Uri("https://example.com/terms")
+										   , Contact = new OpenApiContact { Name = "Example Contact", Url = new Uri("https://example.com/contact") }
+										   , License = new OpenApiLicense { Name = "Example License", Url = new Uri("https://example.com/license") }
+										 }
 										);
 					  var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
 					  options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
@@ -71,7 +64,13 @@ var dataSource = dataSourceBuilder.Build();
 
 builder
    .Services
-   .AddDbContext<CleancontrolContext>(OptionsBuilder)
+   .AddDbContext<CleancontrolContext>(
+									  o => CleanControlDb.CleancontrolContext.BuildOptions(
+																						   o
+																						 , dataSource
+																						 , dataSourceBuilder
+																						  )
+									 )
    .AddAuthorization(Policies.AddPolicies)
    .AddIdentityApiEndpoints<CleanControlUser>()
    .AddEntityFrameworkStores<CleancontrolContext>();
@@ -97,24 +96,8 @@ IEnumerable<Action<WebApplication>> mappers = [ProductsEndpoints.Map, TasksEndpo
 foreach (var mapper in mappers)
 	mapper(app);
 
-app.MapGet("/tibsi/brain",  () => TypedResults.StatusCode(410));
-app.MapGet("/tibsi/dick",  () => TypedResults.StatusCode(416));
+app.MapGet("/tibsi/brain", () => TypedResults.StatusCode(410));
+app.MapGet("/tibsi/dick", () => TypedResults.StatusCode(416));
 
 app.Run();
 return;
-
-void OptionsBuilder(DbContextOptionsBuilder options) =>
-	options
-	   .UseLazyLoadingProxies()
-	   .UseNpgsql(
-				  dataSource
-				, o => {
-					  var searchPaths = dataSourceBuilder.ConnectionStringBuilder.SearchPath?.Split(',');
-					  // Workaround for "__EFMigrationsHistory already exists on dbContext.Database.Migrate();"
-					  // https://github.com/npgsql/efcore.pg/issues/2878
-					  if (searchPaths is not { Length: > 0 })
-						  return;
-					  var mainSchema = searchPaths[0];
-					  o.MigrationsHistoryTable(HistoryRepository.DefaultTableName, mainSchema);
-				  }
-				 );

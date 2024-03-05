@@ -361,7 +361,7 @@
         ],
         "responses": {
           "200": {
-            "description": "OK"
+            "description": "Success"
           }
         }
       }
@@ -484,6 +484,42 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/cleaning_runs/{cleaningRunId}/nextRoom": {
+      "get": {
+        "tags": [
+          "Cleaning runs"
+        ],
+        "summary": "Get the next room to clean",
+        "description": "Fetches the next room to clean",
+        "parameters": [
+          {
+            "name": "cleaningRunId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Room"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -639,9 +675,10 @@
         }
       }
     },
-    "/rooms/refills": {
+    "/rooms/{roomId}/refills": {
       "get": {
         "tags": [
+          "Rooms",
           "Room refills"
         ],
         "summary": "Get all room refills",
@@ -664,6 +701,7 @@
       },
       "post": {
         "tags": [
+          "Rooms",
           "Room refills"
         ],
         "summary": "Create a new room refill",
@@ -671,9 +709,9 @@
         "parameters": [
           {
             "name": "roomId",
-            "in": "query",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -687,9 +725,10 @@
         }
       }
     },
-    "/rooms/refills/{refillId}": {
+    "/rooms/{roomId}/refills/{refillId}": {
       "get": {
         "tags": [
+          "Rooms",
           "Room refills"
         ],
         "summary": "Get a room refill by ID",
@@ -697,9 +736,9 @@
         "parameters": [
           {
             "name": "roomId",
-            "in": "query",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -734,6 +773,7 @@
       },
       "delete": {
         "tags": [
+          "Rooms",
           "Room refills"
         ],
         "summary": "Delete a room refill",
@@ -760,9 +800,10 @@
         }
       }
     },
-    "/rooms/tasks": {
+    "/rooms/{roomId}/tasks": {
       "get": {
         "tags": [
+          "Rooms",
           "Room tasks"
         ],
         "summary": "Get all room tasks",
@@ -770,9 +811,9 @@
         "parameters": [
           {
             "name": "roomId",
-            "in": "query",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -796,9 +837,10 @@
         }
       }
     },
-    "/rooms/tasks/{roomId}": {
+    "/rooms/{roomId}/tasks/{taskId}": {
       "get": {
         "tags": [
+          "Rooms",
           "Room tasks"
         ],
         "summary": "Get a room task by ID",
@@ -806,9 +848,9 @@
         "parameters": [
           {
             "name": "taskId",
-            "in": "query",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -840,6 +882,7 @@
       },
       "delete": {
         "tags": [
+          "Rooms",
           "Room tasks"
         ],
         "summary": "Delete a room task",
@@ -857,9 +900,9 @@
           },
           {
             "name": "taskId",
-            "in": "query",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -878,9 +921,11 @@
         "tags": [
           "Rooms"
         ],
+        "summary": "Get all rooms",
+        "description": "Fetches all rooms",
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -898,6 +943,8 @@
         "tags": [
           "Rooms"
         ],
+        "summary": "Create a new room",
+        "description": "Creates a new room",
         "requestBody": {
           "content": {
             "application/json": {
@@ -930,6 +977,8 @@
         "tags": [
           "Rooms"
         ],
+        "summary": "Get a room by ID",
+        "description": "Fetches a room by its ID",
         "operationId": "GetRoom",
         "parameters": [
           {
@@ -945,7 +994,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -963,6 +1012,8 @@
         "tags": [
           "Rooms"
         ],
+        "summary": "Update a room",
+        "description": "Updates a room by its ID",
         "parameters": [
           {
             "name": "roomId",
@@ -987,7 +1038,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -1005,6 +1056,8 @@
         "tags": [
           "Rooms"
         ],
+        "summary": "Delete a room",
+        "description": "Deletes a room by its ID",
         "parameters": [
           {
             "name": "roomId",
@@ -1019,7 +1072,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "OK"
           },
           "404": {
             "description": "Not Found"

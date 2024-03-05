@@ -51,17 +51,15 @@ public static class Users {
 		dbUser.IsAdUser = user.isAdUser!.Value;
 		dbUser.Name = user.name;
 
-		var claim = new Claim(ClaimTypes.Role, user.role.ToString()!);
-		await userManager.ReplaceClaimAsync(
-											dbUser
-										  , claim
-										  , claim
-										   );
+		var currentRoles = await userManager.GetRolesAsync(dbUser);
+		var newRole = user.role.ToString()!;
 
+		await userManager.RemoveFromRolesAsync(dbUser, currentRoles);
+		await userManager.AddToRoleAsync(dbUser, newRole);
 
 		await db.SaveChangesAsync();
 
-		var role = await GetRoleForUser(dbUser,userManager);
+		var role = Enum.Parse<Role>((await userManager.GetRolesAsync(dbUser)).First());
 
 		var returnUser = new User(
 								  dbUser.Id
@@ -91,11 +89,17 @@ public static class Users {
 	/// <param name="id">ID of the user</param>
 	/// <param name="db"></param>
 	/// <param name="userManager"></param>
+	/// <param name="context"></param>
 	/// <returns><see cref="Ok{User}"/> with the user data, else a <see cref="ProblemHttpResult"/> containing error details.</returns>
-	public static async Task<Results<Ok<User>, ProblemHttpResult ,NotFound>> GetUser(string id, CleancontrolContext db, UserManager<CleanControlUser> userManager) {
+	public static async Task<Results<Ok<User>, ProblemHttpResult ,NotFound, ForbidHttpResult>> GetUser(string id, CleancontrolContext db, UserManager<CleanControlUser> userManager, HttpContext context) {
 		var dbUser = await db.Users.FindAsync(id);
 		if (dbUser is null)
 			return TypedResults.Problem($"User with ID {id} not found", statusCode: StatusCodes.Status404NotFound);
+
+		var currentUser = await userManager.GetUserAsync(context.User);
+
+		if(currentUser!.Id != dbUser.Id && await  userManager.IsInRoleAsync(currentUser, Role.Admin.ToString()))
+			return TypedResults.Forbid();
 
 		var user = new User(
 							dbUser.Id

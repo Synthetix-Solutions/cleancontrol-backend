@@ -9,9 +9,9 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace CleanControlBackend.Schemas;
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public record Product([SwaggerSchema(ReadOnly = true)] Guid? id, string name, int inventoryQuantity, byte[]? image) {
+public record Product([SwaggerSchema(ReadOnly = true)] Guid? id, string name, int inventoryQuantity, string? image) {
 	[JsonConstructor]
-	public Product(string name, int inventoryQuantity, byte[]? image) : this(
+	public Product(string name, int inventoryQuantity, string image) : this(
 																			 null
 																		   , name
 																		   , inventoryQuantity
