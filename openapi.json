@@ -1438,7 +1438,6 @@
           },
           "image": {
             "type": "string",
-            "format": "byte",
             "nullable": true
           }
         },
