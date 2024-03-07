@@ -2,6 +2,7 @@
 
 using CleanControlDb;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 
 #endregion
 
@@ -30,3 +31,4 @@ public static class Policies {
 		o.AddPolicy(AdminOrCleanerOnly, p => p.RequireRole(Role.Admin.ToString(), Role.Cleaner.ToString()));
 	}
 }
+

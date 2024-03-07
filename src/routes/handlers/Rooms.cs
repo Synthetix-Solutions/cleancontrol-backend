@@ -114,7 +114,7 @@ public static class Rooms {
 		if (room is null)
 			return TypedResults.Problem("Room with ID '{roomId}' not found.", statusCode: StatusCodes.Status404NotFound);
 
-		var dbTasks = room.CleaningTasks.Where(ct => ct.GetNextDueDate() <= DateOnly.FromDateTime(DateTime.UtcNow));
+		var dbTasks = room.CleaningTasks.Where(ct => ct.GetNextDueDate(room) <= DateOnly.FromDateTime(DateTime.UtcNow));
 		var tasks = dbTasks.Select(CreateReturnRoomCleaningTask);
 
 		return TypedResults.Ok(tasks);

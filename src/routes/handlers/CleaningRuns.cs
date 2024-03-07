@@ -120,7 +120,7 @@ public static class CleaningRuns {
 				   // .Where(r => string.Compare(r.Number, startingRoom.Number) > 0)
 				   .OrderBy(r => string.Compare( startingRoom.Number, r.Number) + "_" + r.Number)
 				   .ToList()
-				   .FirstOrDefault(r => r.CleaningTasks.Any(ct => ct.GetNextDueDate() <= DateOnly.FromDateTime(DateTime.UtcNow)));
+				   .FirstOrDefault(r => r.CleaningTasks.Any(ct => ct.GetNextDueDate(r) <= DateOnly.FromDateTime(DateTime.UtcNow)));
 
 		if(nextRoom is null)
 			return TypedResults.NotFound();

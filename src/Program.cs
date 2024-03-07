@@ -7,6 +7,7 @@ using CleanControlBackend.Schemas;
 using CleanControlDb;
 using FluentValidation;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.OpenApi.Models;
@@ -91,7 +92,7 @@ app
 app.UseHttpsRedirection();
 app.MapIdentityApi<CleanControlUser>();
 
-IEnumerable<Action<WebApplication>> mappers = [ProductsEndpoints.Map, TasksEndpoints.Map, CleaningRunsEndpoints.Map, RoomsEndpoints.Map];
+IEnumerable<Action<WebApplication>> mappers = [UsersEndpoints.Map,ProductsEndpoints.Map, TasksEndpoints.Map, CleaningRunsEndpoints.Map, RoomsEndpoints.Map];
 
 foreach (var mapper in mappers)
 	mapper(app);
@@ -100,4 +101,4 @@ app.MapGet("/tibsi/brain", () => TypedResults.StatusCode(410));
 app.MapGet("/tibsi/dick", () => TypedResults.StatusCode(416));
 
 app.Run();
-return;
+
