@@ -56,7 +56,7 @@ builder
 					  options.EnableAnnotations();
 				  }
 				 )
-   .Configure<JsonOptions>(options => { options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull; });
+   .Configure<JsonOptions>(options => { options.SerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull; options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
 
 var dataSourceBuilder = new NpgsqlDataSourceBuilder(builder.Configuration.GetConnectionString("CleanControl"));
 
@@ -75,6 +75,7 @@ builder
    .AddAuthorization(Policies.AddPolicies)
    .AddIdentityApiEndpoints<CleanControlUser>()
    .AddEntityFrameworkStores<CleancontrolContext>();
+
 
 var app = builder.Build();
 
