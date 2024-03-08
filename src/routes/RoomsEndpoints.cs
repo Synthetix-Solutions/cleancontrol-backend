@@ -44,17 +44,17 @@ public static class RoomsEndpoints {
 	/// <returns></returns>
 	private static RouteGroupBuilder MapRoomTasksApi(this RouteGroupBuilder group) {
 		group
-		   .MapGet("/", Rooms.GetDueRoomTasks)
+		   .MapGet("/", RoomTasks.GetDueRoomTasks)
 		   .WithDescription("Fetches all room tasks")
 		   .WithSummary("Get all room tasks");
 
 		group
-		   .MapGet("/{taskId:guid}", Rooms.GetRoomTask)
+		   .MapGet("/{taskId:guid}", RoomTasks.GetRoomTask)
 		   .WithDescription("Fetches a room task by its ID")
 		   .WithSummary("Get a room task by ID");
 
 		group
-		   .MapDelete("/{taskId:guid}", Rooms.DeleteRoomTask)
+		   .MapDelete("/{taskId:guid}", RoomTasks.DeleteRoomTask)
 		   .WithDescription("Deletes a room task by its ID")
 		   .WithSummary("Delete a room task");
 
@@ -103,22 +103,22 @@ public static class RoomsEndpoints {
 	/// <returns></returns>
 	private static RouteGroupBuilder MapRoomRefillsApi(this RouteGroupBuilder group) {
 		group
-		   .MapGet("/", Rooms.GetAllRoomRefills)
+		   .MapGet("/", RoomRefills.GetAllRoomRefills)
 		   .WithDescription("Fetches all room refills")
 		   .WithSummary("Get all room refills");
 
 		group
-		   .MapPost("/", Rooms.AddRoomRefills)
+		   .MapPost("/", RoomRefills.AddRoomRefills)
 		   .WithDescription("Creates a new room refill")
 		   .WithSummary("Create a new room refill");
 
 		group
-		   .MapGet("/{refillId:guid}", Rooms.GetRoomRefill)
+		   .MapGet("/{refillId:guid}", RoomRefills.GetRoomRefill)
 		   .WithDescription("Fetches a room refill by its ID")
 		   .WithSummary("Get a room refill by ID");
 
 		group
-		   .MapDelete("/{refillId:guid}", Rooms.DeleteRoomRefill)
+		   .MapDelete("/{refillId:guid}", RoomRefills.DeleteRoomRefill)
 		   .WithDescription("Deletes a room refill by its ID")
 		   .WithSummary("Delete a room refill");
 

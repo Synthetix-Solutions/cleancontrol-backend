@@ -54,11 +54,11 @@ public static class CleaningRuns {
 	/// </summary>
 	/// <param name="dbCleaningRun">Database cleaning run</param>
 	/// <returns>Return cleaning run</returns>
-	private static CleaningRun GetReturnCleaningRun(CleanControlDb.CleaningRun dbCleaningRun) {
+	public static CleaningRun GetReturnCleaningRun(CleanControlDb.CleaningRun dbCleaningRun) {
 		return new CleaningRun(
 							   dbCleaningRun.Id
 							 , dbCleaningRun.Date
-							 , new Room(dbCleaningRun.StartingRoom.Id, dbCleaningRun.StartingRoom.Number)
+							 , Rooms.GetReturnRoom(dbCleaningRun.StartingRoom)
 							 , dbCleaningRun.Cleaners.Select(
 															 u => new User(
 																		   u.Id

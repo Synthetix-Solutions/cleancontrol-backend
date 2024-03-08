@@ -19,7 +19,7 @@ public static class UsersEndpoints {
 	public static void Map(WebApplication app) {
 		app
 		   .MapGroup("/users")
-		   .RequireAuthorization(Policies.AdminOrCleanerOnly)
+		   // .RequireAuthorization(Policies.AdminOrCleanerOnly)
 		   .MapUserApi()		   .AddFluentValidationAutoValidation()
 		   .WithOpenApi()
 		   .WithTags("Users");
@@ -44,7 +44,7 @@ public static class UsersEndpoints {
 		   .WithName("GetUserById");
 		group
 		   .MapPut("/{userId}", Users.UpdateUser)
-		   .RequireAuthorization(Policies.AdminOnly)
+		   // .RequireAuthorization(Policies.AdminOnly)
 		   .WithDescription("Updates a user by its ID")
 		   .WithSummary("Update a user");
 		group

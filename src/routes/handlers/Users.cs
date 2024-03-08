@@ -1,5 +1,6 @@
 #region
 
+using System.Collections.Immutable;
 using System.Security.Claims;
 using CleanControlBackend.Schemas;
 using CleanControlDb;
@@ -78,8 +79,7 @@ public static class Users {
 	/// <param name="userManager"></param>
 	/// <returns>Role of the user.</returns>
 	private static async Task<Role> GetRoleForUser(CleanControlUser dbUser,UserManager<CleanControlUser> userManager) {
-		var role = (await userManager.GetClaimsAsync(dbUser)).First(c => c.Type == ClaimTypes.Role)
-															 .Value;
+		var role = (await userManager.GetRolesAsync(dbUser)).First();
 		return Enum.Parse<Role>(role);
 	}
 
@@ -101,15 +101,18 @@ public static class Users {
 		if(currentUser!.Id != dbUser.Id && await  userManager.IsInRoleAsync(currentUser, Role.Admin.ToString()))
 			return TypedResults.Forbid();
 
-		var user = new User(
-							dbUser.Id
-						  , dbUser.Name
-						  , dbUser.Email
-						  , await GetRoleForUser( dbUser, userManager)
-						  , dbUser.IsAdUser
-						   );
+		var user = await GetReturnUser(userManager, dbUser);
 		return TypedResults.Ok(user);
 	}
+
+	public static async Task<User> GetReturnUser(UserManager<CleanControlUser> userManager, CleanControlUser dbUser) =>
+		new(
+			dbUser.Id
+		  , dbUser.Name
+		  , dbUser.Email
+		  , await GetRoleForUser( dbUser, userManager)
+		  , dbUser.IsAdUser
+		   );
 
 	/// <summary>
 	/// Gets all users.
@@ -119,7 +122,7 @@ public static class Users {
 	/// <returns><see cref="Ok{IEnumerable}"/> containing all user data. Passwords are omitted.</returns>
 	public static Ok<IEnumerable<User>> GetAllUsers(CleancontrolContext db, UserManager<CleanControlUser> userManager) {
 		var dbUsers = db.Users;
-		var users = dbUsers.Select(
+		var users = dbUsers.ToImmutableArray().Select(
 								   u => new User(
 												 u.Id
 											   , u.Name

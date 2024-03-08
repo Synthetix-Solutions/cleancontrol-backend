@@ -30,5 +30,7 @@ public static class Policies {
 		o.AddPolicy(AdminOnly, p => p.RequireRole(Role.Admin.ToString()));
 		o.AddPolicy(AdminOrCleanerOnly, p => p.RequireRole(Role.Admin.ToString(), Role.Cleaner.ToString()));
 	}
+
+
 }
 
