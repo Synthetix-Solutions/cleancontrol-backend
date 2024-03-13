@@ -15,6 +15,7 @@ using Npgsql;
 using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
 
 #endregion
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -43,11 +44,15 @@ builder
 										 "v1"
 									   , new OpenApiInfo {
 											 Version = "v1"
-										   , Title = "ToDo API"
-										   , Description = "An ASP.NET Core Web API for managing ToDo items"
-										   , TermsOfService = new Uri("https://example.com/terms")
-										   , Contact = new OpenApiContact { Name = "Example Contact", Url = new Uri("https://example.com/contact") }
-										   , License = new OpenApiLicense { Name = "Example License", Url = new Uri("https://example.com/license") }
+										   , Title = "CleanControl API"
+										   , Description = "API for CleanControl"
+										   , TermsOfService = new Uri("https://synthetix-solutions.com/legal/terms")
+										   , Contact = new OpenApiContact {
+												 Name = "Contact", Url = new Uri("https://synthetix-solutions.com/contact")
+											 }
+										   , License = new OpenApiLicense {
+												 Name = "License", Url = new Uri("https://synthetix-solutions.com/license")
+											 }
 										 }
 										);
 					  var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -59,7 +64,7 @@ builder
 														In = ParameterLocation.Header
 													  , Description = "Fake JWT Token"
 													  , Name = "Authorization"
-														, Scheme = "Bearer"
+													  , Scheme = "Bearer"
 													  , Type = SecuritySchemeType.ApiKey
 													}
 												   );
@@ -69,11 +74,13 @@ builder
 															 new OpenApiSecurityScheme {
 																 Reference = new OpenApiReference {
 																	 Type = ReferenceType.SecurityScheme, Id = "Bearer"
-																 },
-															 Scheme = "oauth2",
-															 Name = "Bearer",
-															 In = ParameterLocation.Header,
-															 }, []
+																 }
+															   , Scheme = "oauth2"
+															   , Name = "Bearer"
+															   , In = ParameterLocation.Header
+																,
+															 }
+														   , []
 														 }
 													 }
 													);
@@ -146,35 +153,30 @@ await CreateRolesAndUsers(scope.ServiceProvider);
 app.Run();
 return;
 
-static async Task CreateRolesAndUsers(IServiceProvider serviceProvider)
-{
+static async Task CreateRolesAndUsers(IServiceProvider serviceProvider) {
 	var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 	var userManager = serviceProvider.GetRequiredService<UserManager<CleanControlUser>>();
 
-	bool x = await roleManager.RoleExistsAsync("Admin");
-	if (!x)
-	{
-		// first we create Admin rool
+	var x = await roleManager.RoleExistsAsync("Admin");
+	if (!x) {
 		var adminRole = new IdentityRole { Name = "Admin" };
 		await roleManager.CreateAsync(adminRole);
 		var cleanerRole = new IdentityRole { Name = "Cleaner" };
 		await roleManager.CreateAsync(cleanerRole);
-		//Here we create a Admin super user who will maintain the website
 
-		var user = new CleanControlUser();
-		user.UserName = "tolliver@ss.at";
-		user.Email = "tolliver@ss.at";
-		user.Name = "Tolliver";
-		user.IsAdUser = false;
+		var user = new CleanControlUser {
+			UserName = "tolliver@ss.at"
+		  , Email = "tolliver@ss.at"
+		  , Name = "Tolliver"
+		  , IsAdUser = false
+		};
 
-		var userPWD = "String12!";
+		const string userPwd = "String12!";
 
-		var chkUser = await userManager.CreateAsync(user, userPWD);
+		var chkUser = await userManager.CreateAsync(user, userPwd);
 
-		//Add default User to Role Admin
-		if (chkUser.Succeeded)
-		{
-			var result1 = await userManager.AddToRoleAsync(user, "Admin");
+		if (chkUser.Succeeded) {
+			await userManager.AddToRoleAsync(user, "Admin");
 		}
 	}
 }

@@ -44,7 +44,11 @@ public static class UsersEndpoints {
 		   .WithName("GetUserById");
 		group
 		   .MapPut("/{userId}", Users.UpdateUser)
-		   // .RequireAuthorization(Policies.AdminOnly)
+		   .RequireAuthorization(Policies.AdminOnly)
+		   .WithDescription("Updates a user by its ID")
+		   .WithSummary("Update a user");
+		group
+		   .MapPost("", Users.CreateUser)
 		   .WithDescription("Updates a user by its ID")
 		   .WithSummary("Update a user");
 		group

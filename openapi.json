@@ -1,16 +1,16 @@
 {
   "openapi": "3.0.1",
   "info": {
-    "title": "ToDo API",
-    "description": "An ASP.NET Core Web API for managing ToDo items",
-    "termsOfService": "https://example.com/terms",
+    "title": "CleanControl API",
+    "description": "API for CleanControl",
+    "termsOfService": "https://synthetix-solutions.com/legal/terms",
     "contact": {
-      "name": "Example Contact",
-      "url": "https://example.com/contact"
+      "name": "Contact",
+      "url": "https://synthetix-solutions.com/contact"
     },
     "license": {
-      "name": "Example License",
-      "url": "https://example.com/license"
+      "name": "License",
+      "url": "https://synthetix-solutions.com/license"
     },
     "version": "v1"
   },
@@ -1253,6 +1253,38 @@
             }
           }
         }
+      },
+      "post": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Update a user",
+        "description": "Updates a user by its ID",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK"
+          }
+        }
       }
     },
     "/users/{userId}": {
@@ -1727,7 +1759,7 @@
             "description": "The name of the User.",
             "nullable": true
           },
-          "username": {
+          "email": {
             "type": "string",
             "description": "The username of the User.",
             "nullable": true
@@ -1738,6 +1770,10 @@
           "isAdUser": {
             "type": "boolean",
             "description": "true, if User is an AD user",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
             "nullable": true
           }
         },
