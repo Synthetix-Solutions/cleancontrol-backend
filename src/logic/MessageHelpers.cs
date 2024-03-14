@@ -24,27 +24,29 @@ public static class MessageHelpers {
 	}
 
 	public static async Task<IEnumerable<Chat>> GetChatsForUser(Guid userId, CleancontrolContext db, UserManager<CleanControlUser> userManager) {
-		var chats = db
-				   .Messages
-				   .Where(m => m.Sender.Id == userId)
-				   .GroupBy(m => m.Receiver)
-				   .Select(
-						   async c => {
-							   var lastMessage = c.MaxBy(m => m.SentAt);
-							   return new Chat(
-											   await Routes.Handlers.Users.GetReturnUser(userManager, c.Key)
-											 , new Message(
-														   lastMessage.Id
-														 , lastMessage.Sender.Id
-														 , lastMessage.Receiver.Id
-														 , lastMessage.Content
-														 , lastMessage.SentAt
-														  )
-											  );
-						   }
-						  );
+		var chats = db.Messages
+					  .Where(m => m.Sender.Id == userId)
+					  .GroupBy(m => m.Receiver)
+					  .Select(c => new { Group = c, LastMessage = c.MaxBy(m => m.SentAt) })
+					  .ToList();
 
-		return await Task.WhenAll(chats);
+		var returnChats = new List<Chat>();
+
+		foreach (var chat in chats)
+		{
+			var user = await Routes.Handlers.Users.GetReturnUser(userManager, chat.Group.Key);
+			var message = new Message(
+									  chat.LastMessage.Id,
+									  chat.LastMessage.Sender.Id,
+									  chat.LastMessage.Receiver.Id,
+									  chat.LastMessage.Content,
+									  chat.LastMessage.SentAt
+									 );
+
+			returnChats.Add(new Chat(user, message));
+		}
+
+		return returnChats;
 	}
 
 	public static IEnumerable<Message> GetMessagesForUser(Guid userId, DateTime dateFrom, DateTime dateTo, CleancontrolContext db) {

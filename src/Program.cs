@@ -112,7 +112,7 @@ builder
 									 )
    .AddAuthorization(Policies.AddPolicies)
    .AddIdentityApiEndpoints<CleanControlUser>()
-   .AddRoles<IdentityRole>()
+   .AddRoles<IdentityRole<Guid>>()
    .AddEntityFrameworkStores<CleancontrolContext>();
 
 
@@ -154,14 +154,14 @@ app.Run();
 return;
 
 static async Task CreateRolesAndUsers(IServiceProvider serviceProvider) {
-	var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+	var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
 	var userManager = serviceProvider.GetRequiredService<UserManager<CleanControlUser>>();
 
 	var x = await roleManager.RoleExistsAsync("Admin");
 	if (!x) {
-		var adminRole = new IdentityRole { Name = "Admin" };
+		var adminRole = new IdentityRole<Guid> { Name = "Admin" };
 		await roleManager.CreateAsync(adminRole);
-		var cleanerRole = new IdentityRole { Name = "Cleaner" };
+		var cleanerRole = new IdentityRole<Guid>  { Name = "Cleaner" };
 		await roleManager.CreateAsync(cleanerRole);
 
 		var user = new CleanControlUser {
