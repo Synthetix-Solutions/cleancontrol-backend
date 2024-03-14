@@ -9,8 +9,8 @@ namespace CleanControlBackend.Schemas;
 [Authorize(Policies.AdminOrCleanerOnly)]
 public class ChatHub(CleancontrolContext db) : Hub<IChatClient> {
 	private CleancontrolContext DbContext = db;
-	public async Task NewMessage(Guid userId, Message message) => await Clients.All.ReceiveMessage(userId, message);
-
+	public async Task NewMessage(IEnumerable<Guid> userId, Message message) => await Clients.Users(userId).ReceiveMessage(null, message);
 	public async Task GetChatHistory(DateTime from, DateTime to) => await Clients.Caller.RecieveChatHistory(null);
+	public async Task GetChats() => await Clients.Caller.RecieveChats(null);
 
 }
