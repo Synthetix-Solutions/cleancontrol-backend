@@ -2,6 +2,7 @@
 
 using System.Diagnostics.CodeAnalysis;
 using System.Text.Json.Serialization;
+using CleanControlDb;
 using Swashbuckle.AspNetCore.Annotations;
 
 #endregion
@@ -16,13 +17,16 @@ public record CleaningRun([SwaggerSchema(ReadOnly = true)] Guid? id
 						, IEnumerable<Guid>? cleanerIds
 						, Room? StartingRoom
 						, Guid? startingRoomId
-) {
-	public CleaningRun(Guid id, DateTime date, Room StartingRoom, IEnumerable<User> cleaners) : this(
-																									 id
-																								   , date
-																								   , cleaners
-																								   , null
-																								   , StartingRoom
-																								   , null
-																									) { }
+						, CleaningRunPhase Phase
+	)
+	 {
+	public CleaningRun(Guid id, DateTime date, Room StartingRoom, IEnumerable<User> cleaners, CleaningRunPhase phase) : this(
+																															 id
+																														   , date
+																														   , cleaners
+																														   , null
+																														   , StartingRoom
+																														   , null
+																														   , phase
+																															) { }
 }

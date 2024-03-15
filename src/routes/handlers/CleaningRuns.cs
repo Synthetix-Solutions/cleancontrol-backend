@@ -52,28 +52,30 @@ public static class CleaningRuns {
 
 		var cleaningRun = GetReturnCleaningRun(dbCleaningRun);
 
-		return TypedResults.Ok<CleaningRun>(null);
+		return TypedResults.Ok(cleaningRun);
 	}
+
+
 
 	/// <summary>
 	///     Converts a database cleaning run to a return cleaning run
 	/// </summary>
 	/// <param name="dbCleaningRun">Database cleaning run</param>
 	/// <returns>Return cleaning run</returns>
-	public static CleaningRun GetReturnCleaningRun(CleanControlDb.CleaningRun dbCleaningRun) {
-		return new CleaningRun(
-							   dbCleaningRun.Id
-							 , dbCleaningRun.Date
-							 , Rooms.GetReturnRoom(dbCleaningRun.StartingRoom)
-							 , dbCleaningRun.Cleaners.Select(
-															 u => new User(
-																		   u.Id
-																		 , u.Name
-																		 , u.Email
-																		  )
-															)
-							  );
-	}
+	public static CleaningRun GetReturnCleaningRun(CleanControlDb.CleaningRun dbCleaningRun) =>
+		new(
+			dbCleaningRun.Id
+		  , dbCleaningRun.Date
+		  , Rooms.GetReturnRoom(dbCleaningRun.StartingRoom)
+		  , dbCleaningRun.Cleaners.Select(
+										  u => new User(
+														u.Id
+													  , u.Name
+													  , u.Email!
+													   )
+										 )
+			,dbCleaningRun.Phase
+		   );
 
 	/// <summary>
 	///     Creates a new cleaning run
@@ -103,7 +105,7 @@ public static class CleaningRuns {
 			return TypedResults.Problem("One or more cleaner IDs not found", statusCode: StatusCodes.Status404NotFound);
 
 		var dbCleaningRun
-			= new CleanControlDb.CleaningRun { Date = cleaningRun.date ?? DateTime.Now, Cleaners = cleaners, StartingRoom = startingRoom };
+			= new CleanControlDb.CleaningRun { Date = cleaningRun.date ?? DateTime.Now, Cleaners = cleaners, StartingRoom = startingRoom, Phase = CleaningRunPhase.CartChecking};
 
 		db.SaveChanges();
 
@@ -124,6 +126,17 @@ public static class CleaningRuns {
 		return TypedResults.Ok(cleaningRuns);
 	}
 
+	/// <summary>
+	/// Retrieves the next room to be cleaned in a cleaning run.
+	/// </summary>
+	/// <param name="cleaningRunId">The ID of the cleaning run.</param>
+	/// <param name="db">The database context.</param>
+	/// <remarks>
+	/// This method retrieves the next room to be cleaned in a cleaning run. It does this by finding the cleaning run in the database,
+	/// getting the starting room of the cleaning run, and then finding the next room in the database that has a cleaning task due.
+	/// If no such room is found, it returns a NotFound result.
+	/// </remarks>
+	/// <returns>A <see cref="Results{T1, T2, T3}"/> object that contains either an <see cref="Ok{T}"/> result with the next room to be cleaned, a <see cref="ProblemHttpResult"/> with an error message, or a <see cref="NotFound"/> result if no next room is found.</returns>
 	public static Results<Ok<Room>, ProblemHttpResult, NotFound> GetNextRoom(Guid cleaningRunId, CleancontrolContext db) {
 		var dbCleaningRun = db.CleaningRuns.Find(cleaningRunId);
 		if (dbCleaningRun is null)
@@ -132,7 +145,7 @@ public static class CleaningRuns {
 		var startingRoom = dbCleaningRun.StartingRoom;
 		var nextRoom = db
 					  .Rooms
-					   // .Where(r => string.Compare(r.Number, startingRoom.Number) > 0)
+					   // ReSharper disable once StringCompareIsCultureSpecific.1 - Doesn't translate to SQL
 					  .OrderBy(r => string.Compare(startingRoom.Number, r.Number) + "_" + r.Number)
 					  .ToList()
 					  .FirstOrDefault(r => r.CleaningTasks.Any(ct => ct.GetNextDueDate(r) <= DateOnly.FromDateTime(DateTime.UtcNow)));
@@ -143,5 +156,19 @@ public static class CleaningRuns {
 		var returnRoom = new Room(nextRoom.Id, nextRoom.Number);
 
 		return TypedResults.Ok(returnRoom);
+	}
+
+	public static Results<ProblemHttpResult, Ok<CleaningRun>, NotFound> UpdateCleaningRunPhase (Guid cleaningRunId, CleaningRunPhase phase,  CleancontrolContext db) {
+		var dbCleaningRun = db.CleaningRuns.Find(cleaningRunId);
+		if (dbCleaningRun is null)
+			return TypedResults.Problem($"Cleaning run with ID {cleaningRunId} not found", statusCode: StatusCodes.Status404NotFound);
+
+		dbCleaningRun.Phase = phase;
+
+		var returnCleaningRun = GetReturnCleaningRun(dbCleaningRun);
+
+		db.SaveChanges();
+
+		return TypedResults.Ok(returnCleaningRun);
 	}
 }
