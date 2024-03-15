@@ -105,7 +105,7 @@ public static class CleaningRuns {
 			return TypedResults.Problem("One or more cleaner IDs not found", statusCode: StatusCodes.Status404NotFound);
 
 		var dbCleaningRun
-			= new CleanControlDb.CleaningRun { Date = cleaningRun.date ?? DateTime.Now, Cleaners = cleaners, StartingRoom = startingRoom, Phase = CleaningRunPhase.CartChecking};
+			= new CleanControlDb.CleaningRun { Date = cleaningRun.date ?? DateTime.Now, Cleaners = cleaners, StartingRoom = startingRoom};
 
 		db.SaveChanges();
 
