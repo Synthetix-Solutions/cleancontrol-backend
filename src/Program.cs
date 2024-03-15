@@ -6,10 +6,7 @@ using CleanControlBackend.Routes;
 using CleanControlBackend.Schemas;
 using CleanControlDb;
 using FluentValidation;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.OpenApi.Models;
 using Npgsql;
 using JsonOptions = Microsoft.AspNetCore.Http.Json.JsonOptions;
@@ -31,7 +28,7 @@ builder
 			o => o.AddPolicy(
 							 allowAllPolicyName
 						   , p => p
-								 .WithOrigins("http://localhost:5240","https://gourav-d.github.io")
+								 .WithOrigins("http://localhost:5240", "https://gourav-d.github.io", "http://49.13.203.173:3000")
 								 .AllowAnyMethod()
 								 .AllowAnyHeader()
 								 .AllowCredentials()
@@ -79,7 +76,6 @@ builder
 															   , Scheme = "oauth2"
 															   , Name = "Bearer"
 															   , In = ParameterLocation.Header
-																,
 															 }
 														   , []
 														 }
@@ -105,11 +101,11 @@ builder.Services.AddSignalR();
 builder
    .Services
    .AddDbContext<CleancontrolContext>(
-									  o => CleanControlDb.CleancontrolContext.BuildOptions(
-																						   o
-																						 , dataSource
-																						 , dataSourceBuilder
-																						  )
+									  o => CleancontrolContext.BuildOptions(
+																			o
+																		  , dataSource
+																		  , dataSourceBuilder
+																		   )
 									 )
    .AddAuthorization(Policies.AddPolicies)
    .AddIdentityApiEndpoints<CleanControlUser>()
@@ -164,7 +160,7 @@ static async Task CreateRolesAndUsers(IServiceProvider serviceProvider) {
 	if (!x) {
 		var adminRole = new IdentityRole<Guid> { Name = "Admin" };
 		await roleManager.CreateAsync(adminRole);
-		var cleanerRole = new IdentityRole<Guid>  { Name = "Cleaner" };
+		var cleanerRole = new IdentityRole<Guid> { Name = "Cleaner" };
 		await roleManager.CreateAsync(cleanerRole);
 
 		var user = new CleanControlUser {
@@ -178,8 +174,7 @@ static async Task CreateRolesAndUsers(IServiceProvider serviceProvider) {
 
 		var chkUser = await userManager.CreateAsync(user, userPwd);
 
-		if (chkUser.Succeeded) {
+		if (chkUser.Succeeded)
 			await userManager.AddToRoleAsync(user, "Admin");
-		}
 	}
 }

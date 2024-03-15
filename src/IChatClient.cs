@@ -1,5 +1,8 @@
+#region
 
 using CleanControlBackend.Schemas;
+
+#endregion
 
 public interface IChatClient {
 	Task ReceiveMessage(Message message);

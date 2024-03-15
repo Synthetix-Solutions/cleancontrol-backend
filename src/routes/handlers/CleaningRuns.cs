@@ -12,15 +12,18 @@ using Room = CleanControlBackend.Schemas.Room;
 namespace CleanControlBackend.Routes.Handlers;
 
 /// <summary>
-/// Handlers for /cleaningRuns
+///     Handlers for /cleaningRuns
 /// </summary>
 public static class CleaningRuns {
 	/// <summary>
-	/// Deletes a cleaning run by its ID
+	///     Deletes a cleaning run by its ID
 	/// </summary>
 	/// <param name="cleaningRunId">ID of the cleaning run</param>
 	/// <param name="db">Database context</param>
-	/// <returns><see cref="Ok"/> if the cleaning run got deleted, else a <see cref="ProblemHttpResult"/> containing error details.</returns>
+	/// <returns>
+	///     <see cref="Ok" /> if the cleaning run got deleted, else a <see cref="ProblemHttpResult" /> containing error
+	///     details.
+	/// </returns>
 	public static Results<ProblemHttpResult, Ok> DeleteCleaningRun(Guid cleaningRunId, CleancontrolContext db) {
 		var dbCleaningRun = db.CleaningRuns.Find(cleaningRunId);
 		if (dbCleaningRun is null)
@@ -33,11 +36,14 @@ public static class CleaningRuns {
 	}
 
 	/// <summary>
-	/// Gets a cleaning run by its ID
+	///     Gets a cleaning run by its ID
 	/// </summary>
 	/// <param name="cleaningRunId">ID of the cleaning run</param>
 	/// <param name="db">Database context</param>
-	/// <returns><see cref="Ok{CleaningRun}"/> with the cleaning run data, else a <see cref="ProblemHttpResult"/> containing error details.</returns>
+	/// <returns>
+	///     <see cref="Ok{CleaningRun}" /> with the cleaning run data, else a <see cref="ProblemHttpResult" /> containing
+	///     error details.
+	/// </returns>
 	public static Results<Ok<CleaningRun>, ProblemHttpResult> GetCleaningRun(Guid cleaningRunId, CleancontrolContext db) {
 		var dbCleaningRun = db.CleaningRuns.Find(cleaningRunId);
 
@@ -50,7 +56,7 @@ public static class CleaningRuns {
 	}
 
 	/// <summary>
-	/// Converts a database cleaning run to a return cleaning run
+	///     Converts a database cleaning run to a return cleaning run
 	/// </summary>
 	/// <param name="dbCleaningRun">Database cleaning run</param>
 	/// <returns>Return cleaning run</returns>
@@ -70,11 +76,14 @@ public static class CleaningRuns {
 	}
 
 	/// <summary>
-	/// Creates a new cleaning run
+	///     Creates a new cleaning run
 	/// </summary>
 	/// <param name="cleaningRun">Cleaning run data</param>
 	/// <param name="db">Database context</param>
-	/// <returns><see cref="Ok{CleaningRun}"/> with the created cleaning run data, else a <see cref="ProblemHttpResult"/> containing error details.</returns>
+	/// <returns>
+	///     <see cref="Ok{CleaningRun}" /> with the created cleaning run data, else a <see cref="ProblemHttpResult" />
+	///     containing error details.
+	/// </returns>
 	public static Results<Ok<CleaningRun>, ProblemHttpResult> CreateCleaningRun(CleaningRun cleaningRun, CleancontrolContext db) {
 		var startingRoom = db.Rooms.Find(cleaningRun.startingRoomId);
 
@@ -93,16 +102,20 @@ public static class CleaningRuns {
 		if (cleaners.Any(c => c is null))
 			return TypedResults.Problem("One or more cleaner IDs not found", statusCode: StatusCodes.Status404NotFound);
 
-		var dbCleaningRun = new CleanControlDb.CleaningRun { Date = cleaningRun.date ?? DateTime.Now, Cleaners = cleaners, StartingRoom = startingRoom };
+		var dbCleaningRun
+			= new CleanControlDb.CleaningRun { Date = cleaningRun.date ?? DateTime.Now, Cleaners = cleaners, StartingRoom = startingRoom };
 
 		return TypedResults.Ok(GetReturnCleaningRun(dbCleaningRun));
 	}
 
 	/// <summary>
-	/// Gets all cleaning runs
+	///     Gets all cleaning runs
 	/// </summary>
 	/// <param name="db">Database context</param>
-	/// <returns><see cref="Ok{IEnumerable}"/> with all cleaning runs, else a <see cref="ProblemHttpResult"/> containing error details.</returns>
+	/// <returns>
+	///     <see cref="Ok{IEnumerable}" /> with all cleaning runs, else a <see cref="ProblemHttpResult" /> containing
+	///     error details.
+	/// </returns>
 	public static Ok<IEnumerable<CleaningRun>> GetAllCleaningRuns(CleancontrolContext db) {
 		var cleaningRuns = db.CleaningRuns.Select(GetReturnCleaningRun);
 
@@ -116,13 +129,13 @@ public static class CleaningRuns {
 
 		var startingRoom = dbCleaningRun.StartingRoom;
 		var nextRoom = db
-				   .Rooms
-				   // .Where(r => string.Compare(r.Number, startingRoom.Number) > 0)
-				   .OrderBy(r => string.Compare( startingRoom.Number, r.Number) + "_" + r.Number)
-				   .ToList()
-				   .FirstOrDefault(r => r.CleaningTasks.Any(ct => ct.GetNextDueDate(r) <= DateOnly.FromDateTime(DateTime.UtcNow)));
+					  .Rooms
+					   // .Where(r => string.Compare(r.Number, startingRoom.Number) > 0)
+					  .OrderBy(r => string.Compare(startingRoom.Number, r.Number) + "_" + r.Number)
+					  .ToList()
+					  .FirstOrDefault(r => r.CleaningTasks.Any(ct => ct.GetNextDueDate(r) <= DateOnly.FromDateTime(DateTime.UtcNow)));
 
-		if(nextRoom is null)
+		if (nextRoom is null)
 			return TypedResults.NotFound();
 
 		var returnRoom = new Room(nextRoom.Id, nextRoom.Number);

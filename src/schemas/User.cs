@@ -20,16 +20,28 @@ namespace CleanControlBackend.Schemas;
 /// <param name="isAdUser"><see langword="true" />, if User is an AD user</param>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [method: JsonConstructor]
-public record User (Guid? id
-								  , [Required] string name
-								  , [Required] string email
-								  , [Required] Role? role
-								  , [Required] bool? isAdUser
-								  , [SwaggerSchema(WriteOnly = true)] string? password
-								   ) {
+public record User(Guid? id
+				 , [Required] string name
+				 , [Required] string email
+				 , [Required] Role? role
+				 , [Required] bool? isAdUser
+				 , [SwaggerSchema(WriteOnly = true)] string? password
+) {
+	public User(Guid id, string name, string email) : this(
+														   id
+														 , name
+														 , email
+														 , null
+														 , null
+														 , null
+														  ) { }
 
-	public User(Guid id, string name, string email)
-		: this(id, name, email, null, null, null) { }
-	public User(Guid id, string name, string email, Role role, bool isAdUser)
-		: this(id, name, email, role, isAdUser, null) { }
-};
+	public User(Guid id, string name, string email, Role role, bool isAdUser) : this(
+																					 id
+																				   , name
+																				   , email
+																				   , role
+																				   , isAdUser
+																				   , null
+																					) { }
+}

@@ -2,35 +2,31 @@
 
 using CleanControlDb;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 
 #endregion
 
 namespace CleanControlBackend.Schemas;
 
 /// <summary>
-/// Policy types for authorization
+///     Policy types for authorization
 /// </summary>
 public static class Policies {
 	/// <summary>
-	/// Only allow admin users
+	///     Only allow admin users
 	/// </summary>
 	public const string AdminOnly = "AdminOnly";
 
 	/// <summary>
-	/// Allow any admin or cleaner user
+	///     Allow any admin or cleaner user
 	/// </summary>
 	public const string AdminOrCleanerOnly = "AdminOrCleanerOnly";
 
 	/// <summary>
-	/// Init policies
+	///     Init policies
 	/// </summary>
 	/// <param name="o">Options builder</param>
 	public static void AddPolicies(AuthorizationOptions o) {
 		o.AddPolicy(AdminOnly, p => p.RequireRole(Role.Admin.ToString()));
 		o.AddPolicy(AdminOrCleanerOnly, p => p.RequireRole(Role.Admin.ToString(), Role.Cleaner.ToString()));
 	}
-
-
 }
-

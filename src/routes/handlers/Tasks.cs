@@ -49,11 +49,11 @@ public static class Tasks {
 
 	public static Ok<CleaningTask> AddTask(CleaningTask task, CleancontrolContext db) {
 		var dbTask = new CleanControlDb.CleaningTask {
-														 Name = task.name
-													   , Description = task.description
-													   , RecurrenceInterval = task.recurrenceInterval
-													   , OnCheckout = task.onCheckout
-													 };
+			Name = task.name
+		  , Description = task.description
+		  , RecurrenceInterval = task.recurrenceInterval
+		  , OnCheckout = task.onCheckout
+		};
 
 		var returnTasks = CreateReturnTask(dbTask);
 		return TypedResults.Ok(returnTasks);

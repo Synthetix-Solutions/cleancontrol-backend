@@ -27,7 +27,7 @@ public static class Products {
 		dbProduct.Name = product.name;
 		dbProduct.InventoryQuantity = product.inventoryQuantity;
 
-		if(!string.IsNullOrWhiteSpace(product.image))
+		if (!string.IsNullOrWhiteSpace(product.image))
 			dbProduct.Image = product.image;
 
 		db.SaveChanges();

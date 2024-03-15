@@ -1,6 +1,10 @@
+#region
+
 using CleanControlDb;
 using Microsoft.AspNetCore.Http.HttpResults;
 using CleaningTask = CleanControlBackend.Schemas.CleaningTask;
+
+#endregion
 
 namespace CleanControlBackend.Routes.Handlers;
 
@@ -26,7 +30,7 @@ public static class RoomTasks {
 		if (dbTask is null)
 			return TypedResults.Problem("Cleaning task with ID '{taskId}' not found.", statusCode: StatusCodes.Status404NotFound);
 
-		return TypedResults.Ok<CleaningTask>(CreateReturnRoomCleaningTask(dbTask));
+		return TypedResults.Ok(CreateReturnRoomCleaningTask(dbTask));
 	}
 
 	public static Results<Ok<IEnumerable<CleaningTask>>, ProblemHttpResult> GetDueRoomTasks(Guid roomId, CleancontrolContext db) {
@@ -37,7 +41,7 @@ public static class RoomTasks {
 		var dbTasks = room.CleaningTasks.Where(ct => ct.GetNextDueDate(room) <= DateOnly.FromDateTime(DateTime.UtcNow));
 		var tasks = dbTasks.Select(CreateReturnRoomCleaningTask);
 
-		return TypedResults.Ok<IEnumerable<CleaningTask>>(tasks);
+		return TypedResults.Ok(tasks);
 	}
 
 	public static CleaningTask CreateReturnRoomCleaningTask(CleanControlDb.CleaningTask dbTask) =>

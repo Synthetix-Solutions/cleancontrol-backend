@@ -8,19 +8,20 @@ using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 namespace CleanControlBackend.Routes;
 
 /// <summary>
-/// Contains endpoints for /rooms
+///     Contains endpoints for /rooms
 /// </summary>
 public static class RoomsEndpoints {
 	/// <summary>
-	/// Maps routes for /rooms
+	///     Maps routes for /rooms
 	/// </summary>
 	/// <param name="app"></param>
 	public static void Map(WebApplication app) {
-		var group = app.MapGroup("/rooms")
-		   .MapRoomsApi()
-		   .AddFluentValidationAutoValidation()
-		   .WithOpenApi()
-		   .WithTags("Rooms");
+		var group = app
+				   .MapGroup("/rooms")
+				   .MapRoomsApi()
+				   .AddFluentValidationAutoValidation()
+				   .WithOpenApi()
+				   .WithTags("Rooms");
 
 		group
 		   .MapGroup("/{roomId:guid}/refills")
@@ -38,7 +39,7 @@ public static class RoomsEndpoints {
 	}
 
 	/// <summary>
-	/// Contains endpoints for /rooms/tasks
+	///     Contains endpoints for /rooms/tasks
 	/// </summary>
 	/// <param name="group"></param>
 	/// <returns></returns>
@@ -62,7 +63,7 @@ public static class RoomsEndpoints {
 	}
 
 	/// <summary>
-	/// Maps /rooms
+	///     Maps /rooms
 	/// </summary>
 	/// <param name="group"></param>
 	/// <returns></returns>
@@ -97,7 +98,7 @@ public static class RoomsEndpoints {
 	}
 
 	/// <summary>
-	/// Maps /rooms/refills
+	///     Maps /rooms/refills
 	/// </summary>
 	/// <param name="group"></param>
 	/// <returns></returns>

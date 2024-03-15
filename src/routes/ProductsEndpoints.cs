@@ -12,11 +12,11 @@ using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 namespace CleanControlBackend.Routes;
 
 /// <summary>
-/// Contains endpoints for /products
+///     Contains endpoints for /products
 /// </summary>
 public static class ProductsEndpoints {
 	/// <summary>
-	/// Maps routes for /products
+	///     Maps routes for /products
 	/// </summary>
 	/// <param name="app"></param>
 	public static void Map(WebApplication app) {
@@ -29,7 +29,7 @@ public static class ProductsEndpoints {
 	}
 
 	/// <summary>
-	/// Maps /products
+	///     Maps /products
 	/// </summary>
 	/// <param name="group"></param>
 	/// <returns></returns>

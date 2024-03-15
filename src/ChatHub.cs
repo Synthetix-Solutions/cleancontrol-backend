@@ -1,18 +1,23 @@
+#region
+
 using CleanControlBackend.Schemas.logic;
 using CleanControlDb;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
 using SignalRSwaggerGen.Attributes;
+
+#endregion
 
 namespace CleanControlBackend.Schemas;
 
 [SignalRHub]
 // [Authorize(Policies.AdminOrCleanerOnly)]
-public class ChatHub() : Hub<IChatClient> {
-	private UserManager<CleanControlUser> userManager;
-	private CleanControlUser CallingUser => userManager.GetUserAsync(Context.User!).Result ?? throw new InvalidOperationException();
-	private CleancontrolContext db;
+public class ChatHub(CleancontrolContext db, UserManager<CleanControlUser> userManager) : Hub<IChatClient> {
+	private CleanControlUser CallingUser =>
+		userManager.GetUserAsync(Context.User!)
+				   .Result
+	 ?? throw new InvalidOperationException();
+
 	public async Task NewMessage(IEnumerable<Guid> userIds, string message) {
 		var newMessages = userIds.Select(
 										 id => {
@@ -33,17 +38,21 @@ public class ChatHub() : Hub<IChatClient> {
 	}
 
 	public async Task GetChatHistory(DateTime dateFrom, DateTime dateTo) {
-		var chatHistory = logic.MessageHelpers.GetMessagesForUser(
-																  CallingUser.Id
-																, dateFrom
-																, dateTo
-																, db
-																 );
+		var chatHistory = MessageHelpers.GetMessagesForUser(
+															CallingUser.Id
+														  , dateFrom
+														  , dateTo
+														  , db
+														   );
 		await Clients.Caller.RecieveChatHistory(chatHistory);
 	}
 
 	public async Task GetChats() {
-		var chats = await logic.MessageHelpers.GetChatsForUser(CallingUser.Id, db, userManager);
+		var chats = await MessageHelpers.GetChatsForUser(
+														 CallingUser.Id
+													   , db
+													   , userManager
+														);
 		await Clients.Caller.RecieveChats(chats);
 	}
 }

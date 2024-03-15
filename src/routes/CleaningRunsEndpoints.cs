@@ -8,21 +8,20 @@ using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 namespace CleanControlBackend.Routes;
 
 /// <summary>
-/// Contains endpoints for /cleaningRuns
+///     Contains endpoints for /cleaningRuns
 /// </summary>
 public static class CleaningRunsEndpoints {
 	/// <summary>
-	/// Maps routes for /cleaningRuns
+	///     Maps routes for /cleaningRuns
 	/// </summary>
 	/// <param name="app"></param>
 	public static void Map(WebApplication app) {
-		app.MapGroup("/cleaning_runs")
+		app
+		   .MapGroup("/cleaning_runs")
 		   .MapCleaningRunsApi()
 		   .AddFluentValidationAutoValidation()
 		   .WithOpenApi()
 		   .WithTags("Cleaning runs");
-
-
 	}
 
 
@@ -47,9 +46,10 @@ public static class CleaningRunsEndpoints {
 		   .WithDescription("Deletes a cleaning run by its ID")
 		   .WithSummary("Delete a cleaning run");
 
-		group.MapGet("/{cleaningRunId:guid}/nextRoom", CleaningRuns.GetNextRoom)
-			.WithDescription("Fetches the next room to clean")
-			.WithSummary("Get the next room to clean");
+		group
+		   .MapGet("/{cleaningRunId:guid}/nextRoom", CleaningRuns.GetNextRoom)
+		   .WithDescription("Fetches the next room to clean")
+		   .WithSummary("Get the next room to clean");
 
 		return group;
 	}

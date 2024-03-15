@@ -1,9 +1,7 @@
 #region
 
-using CleanControlBackend.Schemas;
 using CleanControlDb;
 using Microsoft.AspNetCore.Http.HttpResults;
-using Product = CleanControlBackend.Schemas.Product;
 using Room = CleanControlBackend.Schemas.Room;
 
 #endregion
@@ -68,5 +66,4 @@ public static class Rooms {
 	}
 
 	public static Room GetReturnRoom(CleanControlDb.Room room) => new(room.Id, room.Number);
-
 }

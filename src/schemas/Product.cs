@@ -12,11 +12,11 @@ namespace CleanControlBackend.Schemas;
 public record Product([SwaggerSchema(ReadOnly = true)] Guid? id, string name, int inventoryQuantity, string? image) {
 	[JsonConstructor]
 	public Product(string name, int inventoryQuantity, string image) : this(
-																			 null
-																		   , name
-																		   , inventoryQuantity
-																		   , image
-																			) { }
+																			null
+																		  , name
+																		  , inventoryQuantity
+																		  , image
+																		   ) { }
 
 	public Product(Guid id, string name, int inventoryQuantity) : this(
 																	   id

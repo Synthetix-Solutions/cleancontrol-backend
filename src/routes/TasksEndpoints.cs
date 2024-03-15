@@ -8,25 +8,27 @@ using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 namespace CleanControlBackend.Routes;
 
 /// <summary>
-/// Contains endpoints for /tasks
+///     Contains endpoints for /tasks
 /// </summary>
 public static class TasksEndpoints {
 	/// <summary>
-	/// Maps routes for /tasks
+	///     Maps routes for /tasks
 	/// </summary>
 	/// <param name="app"></param>
 	public static void Map(WebApplication app) {
 		app
 		   .MapGroup("/tasks")
-		   .MapTasksApi()		   .AddFluentValidationAutoValidation()
+		   .MapTasksApi()
+		   .AddFluentValidationAutoValidation()
 		   .WithOpenApi()
 		   .WithTags("Tasks");
 	}
-/// <summary>
-/// Maps /tasks endpoints
-/// </summary>
-/// <param name="group"></param>
-/// <returns></returns>
+
+	/// <summary>
+	///     Maps /tasks endpoints
+	/// </summary>
+	/// <param name="group"></param>
+	/// <returns></returns>
 	private static RouteGroupBuilder MapTasksApi(this RouteGroupBuilder group) {
 		group
 		   .MapGet("/", Tasks.GetAllTasks)

@@ -1,7 +1,11 @@
+#region
+
 using CleanControlBackend.Schemas;
 using CleanControlDb;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Product = CleanControlBackend.Schemas.Product;
+
+#endregion
 
 namespace CleanControlBackend.Routes.Handlers;
 

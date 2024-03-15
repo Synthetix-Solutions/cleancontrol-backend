@@ -9,24 +9,25 @@ using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 namespace CleanControlBackend.Routes;
 
 /// <summary>
-/// Contains endpoints for /users
+///     Contains endpoints for /users
 /// </summary>
 public static class UsersEndpoints {
 	/// <summary>
-	/// Maps routes for /users
+	///     Maps routes for /users
 	/// </summary>
 	/// <param name="app"></param>
 	public static void Map(WebApplication app) {
 		app
 		   .MapGroup("/users")
-		   // .RequireAuthorization(Policies.AdminOrCleanerOnly)
-		   .MapUserApi()		   .AddFluentValidationAutoValidation()
+			// .RequireAuthorization(Policies.AdminOrCleanerOnly)
+		   .MapUserApi()
+		   .AddFluentValidationAutoValidation()
 		   .WithOpenApi()
 		   .WithTags("Users");
 	}
 
 	/// <summary>
-	/// Maps /users
+	///     Maps /users
 	/// </summary>
 	/// <param name="group"></param>
 	/// <returns></returns>

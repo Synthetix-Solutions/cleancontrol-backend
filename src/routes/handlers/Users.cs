@@ -1,7 +1,6 @@
 #region
 
 using System.Collections.Immutable;
-using System.Security.Claims;
 using CleanControlBackend.Schemas;
 using CleanControlDb;
 using Microsoft.AspNetCore.Http.HttpResults;
@@ -12,17 +11,19 @@ using Microsoft.AspNetCore.Identity;
 namespace CleanControlBackend.Routes.Handlers;
 
 /// <summary>
-/// Handlers for /users
+///     Handlers for /users
 /// </summary>
 public static class Users {
 	/// <summary>
-	/// Deletes a user by its ID
+	///     Deletes a user by its ID
 	/// </summary>
 	/// <param name="userId">ID of the User</param>
 	/// <param name="db"></param>
-	/// <returns><see cref="Ok"/> if user got deleted, else a <see cref="ProblemHttpResult"/> containing error details.</returns>
-	public static Results<Ok, ProblemHttpResult, NotFound>
-		DeleteUser(Guid userId, CleancontrolContext db, UserManager<CleanControlUser> userManager) {
+	/// <returns><see cref="Ok" /> if user got deleted, else a <see cref="ProblemHttpResult" /> containing error details.</returns>
+	public static Results<Ok, ProblemHttpResult, NotFound> DeleteUser(Guid userId
+																	, CleancontrolContext db
+																	, UserManager<CleanControlUser> userManager
+	) {
 		var dbUser = db.Users.Find(userId);
 		if (dbUser is null)
 			return TypedResults.Problem($"User with ID {userId} not found", statusCode: StatusCodes.Status404NotFound);
@@ -36,13 +37,13 @@ public static class Users {
 	}
 
 	/// <summary>
-	/// Updates a user by its ID
+	///     Updates a user by its ID
 	/// </summary>
 	/// <param name="userId">ID of the User</param>
 	/// <param name="user">New data for the User</param>
 	/// <param name="db"></param>
 	/// <param name="userManager"></param>
-	/// <returns><see cref="Ok"/> if user got updated, else a <see cref="ProblemHttpResult"/> containing error details.</returns>
+	/// <returns><see cref="Ok" /> if user got updated, else a <see cref="ProblemHttpResult" /> containing error details.</returns>
 	public static async Task<Results<Ok<User>, ProblemHttpResult, NotFound>> UpdateUser(Guid userId
 																					  , User user
 																					  , CleancontrolContext db
@@ -76,7 +77,7 @@ public static class Users {
 	}
 
 	/// <summary>
-	/// Gets the role for a user.
+	///     Gets the role for a user.
 	/// </summary>
 	/// <param name="dbUser">User, for which the role should be returned.</param>
 	/// <param name="userManager"></param>
@@ -87,26 +88,32 @@ public static class Users {
 	}
 
 	/// <summary>
-	/// Gets a user by its ID
+	///     Gets a user by its ID
 	/// </summary>
 	/// <param name="userId">ID of the user</param>
 	/// <param name="db"></param>
 	/// <param name="userManager"></param>
 	/// <param name="context"></param>
-	/// <returns><see cref="Ok{User}"/> with the user data, else a <see cref="ProblemHttpResult"/> containing error details.</returns>
+	/// <returns><see cref="Ok{User}" /> with the user data, else a <see cref="ProblemHttpResult" /> containing error details.</returns>
 	public static async Task<Results<Ok<User>, ProblemHttpResult, NotFound, ForbidHttpResult>> GetUser(
 		Guid userId
 	  , CleancontrolContext db
 	  , UserManager<CleanControlUser> userManager
 	  , HttpContext context
-	) {
-		return await GetUserFromDB(userId, db
-								 , userManager
-								 , context
-								  );
-	}
+	) =>
+		await GetUserFromDB(
+							userId
+						  , db
+						  , userManager
+						  , context
+						   );
 
-	private static async Task<Results<Ok<User>, ProblemHttpResult, NotFound, ForbidHttpResult>> GetUserFromDB(Guid userId, CleancontrolContext db, UserManager<CleanControlUser> userManager, HttpContext context) {
+	private static async Task<Results<Ok<User>, ProblemHttpResult, NotFound, ForbidHttpResult>> GetUserFromDB(
+		Guid userId
+	  , CleancontrolContext db
+	  , UserManager<CleanControlUser> userManager
+	  , HttpContext context
+	) {
 		var dbUser = await db.Users.FindAsync(userId);
 		if (dbUser is null)
 			return TypedResults.Problem($"User with ID {userId} not found", statusCode: StatusCodes.Status404NotFound);
@@ -121,12 +128,17 @@ public static class Users {
 	}
 
 	public static async Task<Results<Ok<User>, ProblemHttpResult, NotFound, ForbidHttpResult>> GetCurrentUser(
-	   CleancontrolContext db
+		CleancontrolContext db
 	  , UserManager<CleanControlUser> userManager
 	  , HttpContext context
-	) {
-		return await GetUserFromDB((await userManager.GetUserAsync(context.User)).Id, db, userManager, context);
-	}
+	) =>
+		await GetUserFromDB(
+							(await userManager.GetUserAsync(context.User)).Id
+						  , db
+						  , userManager
+						  , context
+						   );
+
 	public static async Task<User> GetReturnUser(UserManager<CleanControlUser> userManager, CleanControlUser dbUser) =>
 		new(
 			dbUser.Id
@@ -140,11 +152,11 @@ public static class Users {
 		   );
 
 	/// <summary>
-	/// Gets all users.
+	///     Gets all users.
 	/// </summary>
 	/// <param name="db"></param>
 	/// <param name="userManager"></param>
-	/// <returns><see cref="Ok{IEnumerable}"/> containing all user data. Passwords are omitted.</returns>
+	/// <returns><see cref="Ok{IEnumerable}" /> containing all user data. Passwords are omitted.</returns>
 	public static Ok<IEnumerable<User>> GetAllUsers(CleancontrolContext db, UserManager<CleanControlUser> userManager) {
 		var dbUsers = db.Users;
 		var users = dbUsers
