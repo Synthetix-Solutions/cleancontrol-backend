@@ -31,9 +31,10 @@ builder
 			o => o.AddPolicy(
 							 allowAllPolicyName
 						   , p => p
-								 .AllowAnyOrigin()
+								 .WithOrigins("http://localhost:5240","https://gourav-d.github.io")
 								 .AllowAnyMethod()
 								 .AllowAnyHeader()
+								 .AllowCredentials()
 							)
 		   )
    .AddProblemDetails()
@@ -145,7 +146,9 @@ foreach (var mapper in mappers)
 
 app.MapGet("/tibsi/brain", () => TypedResults.StatusCode(410));
 app.MapGet("/tibsi/dick", () => TypedResults.StatusCode(416));
-app.MapHub<ChatHub>("/hub");
+// app.MapSignalR();
+
+app.MapHub<ChatHub>("/chatHub");
 
 using var scope = app.Services.CreateScope();
 await CreateRolesAndUsers(scope.ServiceProvider);

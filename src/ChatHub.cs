@@ -8,9 +8,11 @@ using SignalRSwaggerGen.Attributes;
 namespace CleanControlBackend.Schemas;
 
 [SignalRHub]
-[Authorize(Policies.AdminOrCleanerOnly)]
-public class ChatHub(CleancontrolContext db,UserManager<CleanControlUser> userManager) : Hub<IChatClient> {
+// [Authorize(Policies.AdminOrCleanerOnly)]
+public class ChatHub() : Hub<IChatClient> {
+	private UserManager<CleanControlUser> userManager;
 	private CleanControlUser CallingUser => userManager.GetUserAsync(Context.User!).Result ?? throw new InvalidOperationException();
+	private CleancontrolContext db;
 	public async Task NewMessage(IEnumerable<Guid> userIds, string message) {
 		var newMessages = userIds.Select(
 										 id => {
