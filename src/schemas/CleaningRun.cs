@@ -1,6 +1,7 @@
 #region
 
 using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
 using Swashbuckle.AspNetCore.Annotations;
 
 #endregion
@@ -8,8 +9,9 @@ using Swashbuckle.AspNetCore.Annotations;
 namespace CleanControlBackend.Schemas;
 
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public record CleaningRun([SwaggerSchema(ReadOnly = true)] Guid id
-						, DateTime date
+[method: JsonConstructor]
+public record CleaningRun([SwaggerSchema(ReadOnly = true)] Guid? id
+						, DateTime? date
 						, IEnumerable<User>? cleaners
 						, IEnumerable<Guid>? cleanerIds
 						, Room? StartingRoom

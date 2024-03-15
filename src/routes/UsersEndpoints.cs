@@ -34,16 +34,16 @@ public static class UsersEndpoints {
 		// Implement your logic to fetch all users here
 		group
 		   .MapGet("/", Users.GetAllUsers)
-		   .RequireAuthorization(Policies.AdminOnly)
+		   .RequireAuthorization(Policies.AdminOrCleanerOnly)
 		   .WithDescription("Fetches all users")
 		   .WithSummary("Get all users");
 		group
-		   .MapGet("/{userId}", Users.GetUser)
+		   .MapGet("/{userId:guid}", Users.GetUser)
 		   .WithDescription("Fetches a user by its ID")
 		   .WithSummary("Get a user by ID")
 		   .WithName("GetUserById");
 		group
-		   .MapPut("/{userId}", Users.UpdateUser)
+		   .MapPut("/{userId:guid}", Users.UpdateUser)
 		   .RequireAuthorization(Policies.AdminOnly)
 		   .WithDescription("Updates a user by its ID")
 		   .WithSummary("Update a user");
@@ -52,11 +52,15 @@ public static class UsersEndpoints {
 		   .WithDescription("Updates a user by its ID")
 		   .WithSummary("Update a user");
 		group
-		   .MapDelete("/{userId}", Users.DeleteUser)
+		   .MapDelete("/{userId:guid}", Users.DeleteUser)
 		   .RequireAuthorization(Policies.AdminOnly)
 		   .WithDescription("Deletes a user by its ID")
 		   .WithSummary("Delete a user");
-
+		group
+		   .MapGet("/me", Users.GetCurrentUser)
+		   .RequireAuthorization(Policies.AdminOrCleanerOnly)
+		   .WithDescription("Deletes a user by its ID")
+		   .WithSummary("Delete a user");
 		return group;
 	}
 }

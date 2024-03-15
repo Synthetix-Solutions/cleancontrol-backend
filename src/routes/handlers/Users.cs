@@ -18,14 +18,14 @@ public static class Users {
 	/// <summary>
 	/// Deletes a user by its ID
 	/// </summary>
-	/// <param name="id">ID of the User</param>
+	/// <param name="userId">ID of the User</param>
 	/// <param name="db"></param>
 	/// <returns><see cref="Ok"/> if user got deleted, else a <see cref="ProblemHttpResult"/> containing error details.</returns>
 	public static Results<Ok, ProblemHttpResult, NotFound>
-		DeleteUser(string id, CleancontrolContext db, UserManager<CleanControlUser> userManager) {
-		var dbUser = db.Users.Find(id);
+		DeleteUser(Guid userId, CleancontrolContext db, UserManager<CleanControlUser> userManager) {
+		var dbUser = db.Users.Find(userId);
 		if (dbUser is null)
-			return TypedResults.Problem($"User with ID {id} not found", statusCode: StatusCodes.Status404NotFound);
+			return TypedResults.Problem($"User with ID {userId} not found", statusCode: StatusCodes.Status404NotFound);
 
 		userManager
 		   .DeleteAsync(dbUser)
@@ -38,19 +38,19 @@ public static class Users {
 	/// <summary>
 	/// Updates a user by its ID
 	/// </summary>
-	/// <param name="id">ID of the User</param>
+	/// <param name="userId">ID of the User</param>
 	/// <param name="user">New data for the User</param>
 	/// <param name="db"></param>
 	/// <param name="userManager"></param>
 	/// <returns><see cref="Ok"/> if user got updated, else a <see cref="ProblemHttpResult"/> containing error details.</returns>
-	public static async Task<Results<Ok<User>, ProblemHttpResult, NotFound>> UpdateUser(string id
+	public static async Task<Results<Ok<User>, ProblemHttpResult, NotFound>> UpdateUser(Guid userId
 																					  , User user
 																					  , CleancontrolContext db
 																					  , UserManager<CleanControlUser> userManager
 	) {
-		var dbUser = await db.Users.FindAsync(id);
+		var dbUser = await db.Users.FindAsync(userId);
 		if (dbUser is null)
-			return TypedResults.Problem($"User with ID {id} not found", statusCode: StatusCodes.Status404NotFound);
+			return TypedResults.Problem($"User with ID {userId} not found", statusCode: StatusCodes.Status404NotFound);
 
 		dbUser.IsAdUser = user.isAdUser!.Value;
 		dbUser.Name = user.name;
@@ -89,20 +89,27 @@ public static class Users {
 	/// <summary>
 	/// Gets a user by its ID
 	/// </summary>
-	/// <param name="id">ID of the user</param>
+	/// <param name="userId">ID of the user</param>
 	/// <param name="db"></param>
 	/// <param name="userManager"></param>
 	/// <param name="context"></param>
 	/// <returns><see cref="Ok{User}"/> with the user data, else a <see cref="ProblemHttpResult"/> containing error details.</returns>
 	public static async Task<Results<Ok<User>, ProblemHttpResult, NotFound, ForbidHttpResult>> GetUser(
-		string id
+		Guid userId
 	  , CleancontrolContext db
 	  , UserManager<CleanControlUser> userManager
 	  , HttpContext context
 	) {
-		var dbUser = await db.Users.FindAsync(id);
+		return await GetUserFromDB(userId, db
+								 , userManager
+								 , context
+								  );
+	}
+
+	private static async Task<Results<Ok<User>, ProblemHttpResult, NotFound, ForbidHttpResult>> GetUserFromDB(Guid userId, CleancontrolContext db, UserManager<CleanControlUser> userManager, HttpContext context) {
+		var dbUser = await db.Users.FindAsync(userId);
 		if (dbUser is null)
-			return TypedResults.Problem($"User with ID {id} not found", statusCode: StatusCodes.Status404NotFound);
+			return TypedResults.Problem($"User with ID {userId} not found", statusCode: StatusCodes.Status404NotFound);
 
 		var currentUser = await userManager.GetUserAsync(context.User);
 
@@ -113,6 +120,13 @@ public static class Users {
 		return TypedResults.Ok(user);
 	}
 
+	public static async Task<Results<Ok<User>, ProblemHttpResult, NotFound, ForbidHttpResult>> GetCurrentUser(
+	   CleancontrolContext db
+	  , UserManager<CleanControlUser> userManager
+	  , HttpContext context
+	) {
+		return await GetUserFromDB((await userManager.GetUserAsync(context.User)).Id, db, userManager, context);
+	}
 	public static async Task<User> GetReturnUser(UserManager<CleanControlUser> userManager, CleanControlUser dbUser) =>
 		new(
 			dbUser.Id

@@ -93,7 +93,7 @@ public static class CleaningRuns {
 		if (cleaners.Any(c => c is null))
 			return TypedResults.Problem("One or more cleaner IDs not found", statusCode: StatusCodes.Status404NotFound);
 
-		var dbCleaningRun = new CleanControlDb.CleaningRun { Date = cleaningRun.date, Cleaners = cleaners, StartingRoom = startingRoom };
+		var dbCleaningRun = new CleanControlDb.CleaningRun { Date = cleaningRun.date ?? DateTime.Now, Cleaners = cleaners, StartingRoom = startingRoom };
 
 		return TypedResults.Ok(GetReturnCleaningRun(dbCleaningRun));
 	}
