@@ -28,7 +28,11 @@ builder
 			o => o.AddPolicy(
 							 allowAllPolicyName
 						   , p => p
-								 .WithOrigins("http://localhost:5240", "https://gourav-d.github.io", "http://49.13.203.173:3000")
+								 .WithOrigins(
+											  "http://localhost:5240"
+											, "https://gourav-d.github.io"
+											, "http://49.13.203.173:3000"
+											 )
 								 .AllowAnyMethod()
 								 .AllowAnyHeader()
 								 .AllowCredentials()
@@ -159,23 +163,20 @@ await CreateRolesAndUsers(scope.ServiceProvider);
 app.Run();
 return;
 
-static async Task AuthQueryStringToHeader(HttpContext context, Func<Task> next)
-{
-	var qs = context.Request.QueryString;
-
-	if (string.IsNullOrWhiteSpace(context.Request.Headers["Authorization"]) && qs.HasValue)
-	{
-		var token = (from pair in qs.Value.TrimStart('?').Split('&')
-					 where pair.StartsWith("access_token=")
-					 select pair.Substring("access_token=".Length)).FirstOrDefault();
-
-		if (!string.IsNullOrWhiteSpace(token))
-		{
-			context.Request.Headers.Add("Authorization", "Bearer " + token);
+static async Task AuthQueryStringToHeader(HttpContext context, Func<Task> next) {
+	if (string.IsNullOrWhiteSpace(context.Request.Headers.Authorization) && context.Request.QueryString.HasValue) {
+		var token = context
+				   .Request
+				   .QueryString
+				   .Value
+				   .Split('&')
+				   .FirstOrDefault(pair => pair.StartsWith("access_token="))?["access_token=".Length..];
+		if (!string.IsNullOrWhiteSpace(token)) {
+			context.Request.Headers.Append("Authorization", $"Bearer {token}");
 		}
 	}
 
-	await next?.Invoke();
+	await next?.Invoke()!;
 }
 
 static async Task CreateRolesAndUsers(IServiceProvider serviceProvider) {
