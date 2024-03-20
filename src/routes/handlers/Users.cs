@@ -15,11 +15,15 @@ namespace CleanControlBackend.Routes.Handlers;
 /// </summary>
 public static class Users {
 	/// <summary>
-	///     Deletes a user by its ID
+	///     Deletes a user by its ID.
 	/// </summary>
-	/// <param name="userId">ID of the User</param>
-	/// <param name="db"></param>
-	/// <returns><see cref="Ok" /> if user got deleted, else a <see cref="ProblemHttpResult" /> containing error details.</returns>
+	/// <param name="userId">The unique identifier of the user to be deleted.</param>
+	/// <param name="db">The database context.</param>
+	/// <param name="userManager">The user manager.</param>
+	/// <returns>
+	///     <see cref="Ok" /> if the user was successfully deleted, else a <see cref="ProblemHttpResult" /> containing error details.
+	///     If the user is not found, it returns <see cref="NotFound" />.
+	/// </returns>
 	public static Results<Ok, ProblemHttpResult, NotFound> DeleteUser(Guid userId
 																	, CleancontrolContext db
 																	, UserManager<CleanControlUser> userManager
@@ -76,16 +80,6 @@ public static class Users {
 		return TypedResults.Ok(returnUser);
 	}
 
-	/// <summary>
-	///     Gets the role for a user.
-	/// </summary>
-	/// <param name="dbUser">User, for which the role should be returned.</param>
-	/// <param name="userManager"></param>
-	/// <returns>Role of the user.</returns>
-	private static async Task<Role> GetRoleForUser(CleanControlUser dbUser, UserManager<CleanControlUser> userManager) {
-		var role = (await userManager.GetRolesAsync(dbUser)).First();
-		return Enum.Parse<Role>(role);
-	}
 
 	/// <summary>
 	///     Gets a user by its ID
@@ -123,33 +117,33 @@ public static class Users {
 		if (currentUser!.Id != dbUser.Id && await userManager.IsInRoleAsync(currentUser, Role.Admin.ToString()))
 			return TypedResults.Forbid();
 
-		var user = await GetReturnUser(userManager, dbUser);
+		var user = await User.FromDbUser(userManager, dbUser);
 		return TypedResults.Ok(user);
 	}
 
+	/// <summary>
+	///     Gets the current logged in user.
+	/// </summary>
+	/// <param name="db">The database context.</param>
+	/// <param name="userManager">The user manager.</param>
+	/// <param name="context">The HTTP context.</param>
+	/// <returns>
+	///     <see cref="Ok{User}" /> with the current user data, else a <see cref="ProblemHttpResult" /> containing error details.
+	///     If the user is not found, it returns <see cref="NotFound" />.
+	///     If the user is not authorized to perform the operation, it returns <see cref="ForbidHttpResult" />.
+	/// </returns>
 	public static async Task<Results<Ok<User>, ProblemHttpResult, NotFound, ForbidHttpResult>> GetCurrentUser(
 		CleancontrolContext db
 	  , UserManager<CleanControlUser> userManager
 	  , HttpContext context
 	) =>
 		await GetUserFromDB(
-							(await userManager.GetUserAsync(context.User)).Id
+							(await userManager.GetUserAsync(context.User))!.Id
 						  , db
 						  , userManager
 						  , context
 						   );
 
-	public static async Task<User> GetReturnUser(UserManager<CleanControlUser> userManager, CleanControlUser dbUser) =>
-		new(
-			dbUser.Id
-		  , dbUser.Name
-		  , dbUser.Email
-		  , await GetRoleForUser(
-								 dbUser
-							   , userManager
-								)
-		  , dbUser.IsAdUser
-		   );
 
 	/// <summary>
 	///     Gets all users.
@@ -166,14 +160,24 @@ public static class Users {
 										 u.Id
 									   , u.Name
 									   , u.Email
-									   , GetRoleForUser(u, userManager)
-											.Result
+									   , u.GetRole(userManager)
+										  .Result
 									   , u.IsAdUser
 										)
 						  );
 		return TypedResults.Ok(users.AsEnumerable());
 	}
 
+	/// <summary>
+	///     Creates a new user.
+	/// </summary>
+	/// <param name="user">The user data.</param>
+	/// <param name="db">The database context.</param>
+	/// <param name="userManager">The user manager.</param>
+	/// <returns>
+	///     <see cref="CreatedAtRoute{User}" /> with the created user data, else a <see cref="Ok" />.
+	///     If the user creation fails, it returns a <see cref="ProblemHttpResult" /> containing error details.
+	/// </returns>
 	public static async Task<Results<CreatedAtRoute<User>, Ok>> CreateUser(User user
 																		 , CleancontrolContext db
 																		 , UserManager<CleanControlUser> userManager

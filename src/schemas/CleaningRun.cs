@@ -9,6 +9,10 @@ using Swashbuckle.AspNetCore.Annotations;
 
 namespace CleanControlBackend.Schemas;
 
+/// <summary>
+///     Represents a cleaning run DTO.
+/// </summary>
+/// <param name="id">The unique identifier of the cleaning run</param>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 [method: JsonConstructor]
 public record CleaningRun([SwaggerSchema(ReadOnly = true)] Guid? id
@@ -20,13 +24,14 @@ public record CleaningRun([SwaggerSchema(ReadOnly = true)] Guid? id
 						, CleaningRunPhase Phase
 	)
 	 {
-	public CleaningRun(Guid id, DateTime date, Room StartingRoom, IEnumerable<User> cleaners, CleaningRunPhase phase) : this(
-																															 id
-																														   , date
-																														   , cleaners
-																														   , null
-																														   , StartingRoom
-																														   , null
-																														   , phase
-																															) { }
+		 /// <inheritdoc />
+		 public CleaningRun(Guid id, DateTime date, Room StartingRoom, IEnumerable<User> cleaners, CleaningRunPhase phase) : this(
+																																  id
+																																, date
+																																, cleaners
+																																, null
+																																, StartingRoom
+																																, null
+																																, phase
+																																 ) { }
 }

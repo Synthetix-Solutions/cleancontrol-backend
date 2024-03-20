@@ -66,7 +66,7 @@ public static class CleaningRuns {
 		new(
 			dbCleaningRun.Id
 		  , dbCleaningRun.Date
-		  , Rooms.GetReturnRoom(dbCleaningRun.StartingRoom)
+		  , Room.FromDbRoom(dbCleaningRun.StartingRoom)
 		  , dbCleaningRun.Cleaners.Select(
 										  u => new User(
 														u.Id
@@ -158,6 +158,18 @@ public static class CleaningRuns {
 		return TypedResults.Ok(returnRoom);
 	}
 
+	/// <summary>
+	/// Updates the phase of a cleaning run.
+	/// </summary>
+	/// <param name="cleaningRunId">The ID of the cleaning run to update.</param>
+	/// <param name="phase">The new phase for the cleaning run.</param>
+	/// <param name="db">The database context.</param>
+	/// <remarks>
+	/// This method updates the phase of a cleaning run. It does this by finding the cleaning run in the database,
+	/// updating its phase, and then saving the changes to the database.
+	/// If the cleaning run is not found, it returns a <see cref="ProblemHttpResult"/> with a 404 status code.
+	/// </remarks>
+	/// <returns>A <see cref="Results{T1, T2, T3}"/> object that contains either an <see cref="Ok{T}"/> result with the updated cleaning run, a <see cref="ProblemHttpResult"/> with an error message, or a <see cref="NotFound"/> result if the cleaning run is not found.</returns>
 	public static Results<ProblemHttpResult, Ok<CleaningRun>, NotFound> UpdateCleaningRunPhase (Guid cleaningRunId, CleaningRunPhase phase,  CleancontrolContext db) {
 		var dbCleaningRun = db.CleaningRuns.Find(cleaningRunId);
 		if (dbCleaningRun is null)

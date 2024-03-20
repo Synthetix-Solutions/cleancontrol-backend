@@ -1,18 +1,29 @@
 #region
 
-using CleanControlBackend.Routes.Handlers;
 using CleanControlDb;
 using Microsoft.AspNetCore.Identity;
 
 #endregion
 
-namespace CleanControlBackend.Schemas.logic;
+namespace CleanControlBackend.Schemas.Logic;
 
+/// <summary>
+/// Helpers for messaging
+/// </summary>
 public static class MessageHelpers {
+	/// <summary>
+	/// Creates a new message between two users.
+	/// </summary>
+	/// <param name="senderId">The ID of the user sending the message.</param>
+	/// <param name="receiverId">The ID of the user receiving the message.</param>
+	/// <param name="message">The content of the message.</param>
+	/// <param name="db">The database context.</param>
+	/// <returns>A new Message object that has been saved to the database.</returns>
+	/// <exception cref="ArgumentException">Thrown when either the sender or receiver cannot be found in the database.</exception>
 	public static Message CreateMessage(Guid senderId, Guid receiverId, string message, CleancontrolContext db) {
 		var newMessage = new CleanControlDb.Message {
-			Sender = db.Users.Find(senderId) ?? throw new Exception($"Sender with ID {senderId} not found.")
-		  , Receiver = db.Users.Find(receiverId) ?? throw new Exception($"Receiver with ID {receiverId} not found.")
+			Sender = db.Users.Find(senderId) ?? throw new ArgumentException($"Sender with ID {senderId} not found.")
+		  , Receiver = db.Users.Find(receiverId) ?? throw new ArgumentException($"Receiver with ID {receiverId} not found.")
 		  , Content = message
 		};
 
@@ -28,44 +39,61 @@ public static class MessageHelpers {
 		return returnMessage;
 	}
 
-	public static async Task<IEnumerable<Chat>> GetChatsForUser(Guid userId, CleancontrolContext db, UserManager<CleanControlUser> userManager) {
-		var chats = db
-				   .Messages
-				   .Where(m => m.Sender.Id == userId)
-				   .GroupBy(m => m.Receiver)
-				   .Select(c => new { Group = c, LastMessage = c.MaxBy(m => m.SentAt) })
-				   .ToList();
-
-		var returnChats = new List<Chat>();
-
-		foreach (var chat in chats) {
-			var user = await Users.GetReturnUser(userManager, chat.Group.Key);
-			var message = new Message(
-									  chat.LastMessage.Id
-									, chat.LastMessage.Sender.Id
-									, chat.LastMessage.Receiver.Id
-									, chat.LastMessage.Content
-									, chat.LastMessage.SentAt
-									 );
-
-			returnChats.Add(new Chat(user, message));
-		}
-
-		return returnChats;
-	}
-
-	public static IEnumerable<Message> GetMessagesForUser(Guid userId, DateTime dateFrom, DateTime dateTo, CleancontrolContext db) {
+	/// <summary>
+	/// Retrieves the chat instances for a specific user.
+	/// </summary>
+	/// <param name="userId">The ID of the user for whom to retrieve chat instances.</param>
+	/// <param name="db">The database context.</param>
+	/// <param name="userManager">The user manager.</param>
+	/// <remarks>
+	/// This method retrieves all chat instances that the specified user is a part of.
+	/// Each chat instance includes the participants and the messages exchanged.
+	/// </remarks>
+	/// <returns>A Task that represents the asynchronous operation. The task result contains the chat instances for the specified user.</returns>
+	public static IEnumerable<Chat> GetChatsForUser(Guid userId, CleancontrolContext db, UserManager<CleanControlUser> userManager) {
 		return db
 			  .Messages
-			  .Where(m => m.Sender.Id == userId && m.SentAt >= dateFrom && m.SentAt <= dateTo)
+			  .Where(m => m.Sender.Id == userId)
+			  .GroupBy(m => m.Receiver, (sender, messages) => new { Sender = sender, LastMessage = messages.MaxBy(m => m.SentAt)! })
 			  .Select(
-					  m => new Message(
-									   m.Id
-									 , m.Sender.Id
-									 , m.Receiver.Id
-									 , m.Content
-									 , m.SentAt
+					  chat => new Chat(
+									   User.FromDbUser(userManager, chat.Sender)
+											.Result
+									 , new Message(
+												   chat.LastMessage.Id
+												 , chat.LastMessage.Sender.Id
+												 , chat.LastMessage.Receiver.Id
+												 , chat.LastMessage.Content
+												 , chat.LastMessage.SentAt
+												  )
 									  )
 					 );
 	}
+
+	/// <summary>
+	/// Retrieves the messages for a specific user within a specified date range.
+	/// </summary>
+	/// <param name="userId">The ID of the user for whom to retrieve messages.</param>
+	/// <param name="dateFrom">The start date of the range within which to retrieve messages.</param>
+	/// <param name="dateTo">The end date of the range within which to retrieve messages.</param>
+	/// <param name="db">The database context.</param>
+	/// <remarks>
+	/// This method retrieves all messages that the specified user has sent within the specified date range.
+	/// Each message includes the sender, receiver, content, and the time it was sent.
+	/// </remarks>
+	/// <returns>An IEnumerable of Message objects that represent the messages sent by the user within the specified date range.</returns>
+
+	public static IEnumerable<Message> GetMessagesForUser(Guid userId, DateTime dateFrom, DateTime dateTo, CleancontrolContext db) =>
+		db
+		   .Messages
+		   .Where(m => m.Sender.Id == userId && m.SentAt >= dateFrom && m.SentAt <= dateTo)
+		   .Select(
+				   m => new Message(
+									m.Id
+								  , m.Sender.Id
+								  , m.Receiver.Id
+								  , m.Content
+								  , m.SentAt
+								   )
+				  );
 }

@@ -51,6 +51,10 @@ public static class CleaningRunsEndpoints {
 		   .WithDescription("Fetches the next room to clean")
 		   .WithSummary("Get the next room to clean");
 
+		group
+		   .MapPatch("/{cleaningRunId:guid}/phase", CleaningRuns.UpdateCleaningRunPhase)
+		   .WithDescription("Fetches the next room to clean")
+		   .WithSummary("Get the next room to clean");
 		return group;
 	}
 }
