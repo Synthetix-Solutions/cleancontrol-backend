@@ -103,6 +103,8 @@ public static class Tasks {
 		};
 
 		var returnTasks = CleaningTask.FromDbRoomCleaningTask(dbTask);
+		db.SaveChanges();
+
 		return TypedResults.Ok(returnTasks);
 	}
 
