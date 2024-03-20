@@ -121,7 +121,10 @@ if (!app.Environment.IsDevelopment()) {
 	app.UseStatusCodePages();
 }
 
+app.Use(async (context, next) => await AuthQueryStringToHeader(context, next));
 app.UseCors(allowAllPolicyName);
+app.UseAuthentication();
+app.UseAuthorization();
 
 app
    .UseSwagger()
@@ -129,6 +132,9 @@ app
 
 app.UseHttpsRedirection();
 app.MapIdentityApi<CleanControlUser>();
+// app.UseAuthentication();
+// app.UseAuthorization();
+
 
 IEnumerable<Action<WebApplication>> mappers = [
 												  UsersEndpoints.Map
@@ -152,6 +158,25 @@ await CreateRolesAndUsers(scope.ServiceProvider);
 
 app.Run();
 return;
+
+static async Task AuthQueryStringToHeader(HttpContext context, Func<Task> next)
+{
+	var qs = context.Request.QueryString;
+
+	if (string.IsNullOrWhiteSpace(context.Request.Headers["Authorization"]) && qs.HasValue)
+	{
+		var token = (from pair in qs.Value.TrimStart('?').Split('&')
+					 where pair.StartsWith("access_token=")
+					 select pair.Substring("access_token=".Length)).FirstOrDefault();
+
+		if (!string.IsNullOrWhiteSpace(token))
+		{
+			context.Request.Headers.Add("Authorization", "Bearer " + token);
+		}
+	}
+
+	await next?.Invoke();
+}
 
 static async Task CreateRolesAndUsers(IServiceProvider serviceProvider) {
 	var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole<Guid>>>();
