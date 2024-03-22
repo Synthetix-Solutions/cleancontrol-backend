@@ -56,12 +56,15 @@ public class ChatHub(CleancontrolContext db, UserManager<CleanControlUser> userM
 	/// <param name="dateTo">The end date for the period for which to retrieve chat history. Messages sent up to and including this date will be included in the chat history.</param>
 	/// <returns>The chat history for the calling user within the specified date range.</returns>
 	public async Task GetChatHistory(DateTime dateFrom, DateTime dateTo) {
+
+
 		var chatHistory = MessageHelpers.GetMessagesForUser(
 															CallingUser.Id
 														  , dateFrom
 														  , dateTo
 														  , db
-														   );
+														   ).ToList();
+
 		await Clients.Caller.RecieveChatHistory(chatHistory);
 	}
 
@@ -74,7 +77,7 @@ public class ChatHub(CleancontrolContext db, UserManager<CleanControlUser> userM
 														 CallingUser.Id
 													   , db
 													   , userManager
-														);
+														).ToList();
 		await Clients.Caller.RecieveChats(chats);
 	}
 }

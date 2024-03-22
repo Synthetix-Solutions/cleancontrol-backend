@@ -53,12 +53,13 @@ public static class MessageHelpers {
 	public static IEnumerable<Chat> GetChatsForUser(Guid userId, CleancontrolContext db, UserManager<CleanControlUser> userManager) {
 		return db
 			  .Messages
-			  .Where(m => m.Sender.Id == userId)
+			  .Where(m => m.Receiver.Id == userId)
+			  .ToList()
 			  .GroupBy(m => m.Receiver, (sender, messages) => new { Sender = sender, LastMessage = messages.MaxBy(m => m.SentAt)! })
 			  .Select(
 					  chat => new Chat(
 									   User.FromDbUser(userManager, chat.Sender)
-											.Result
+										   .Result
 									 , new Message(
 												   chat.LastMessage.Id
 												 , chat.LastMessage.Sender.Id
@@ -82,18 +83,21 @@ public static class MessageHelpers {
 	/// Each message includes the sender, receiver, content, and the time it was sent.
 	/// </remarks>
 	/// <returns>An IEnumerable of Message objects that represent the messages sent by the user within the specified date range.</returns>
+	public static IEnumerable<Message> GetMessagesForUser(Guid userId, DateTime dateFrom, DateTime dateTo, CleancontrolContext db) {
+		var dateFromUtc = DateTime.SpecifyKind(dateFrom, DateTimeKind.Utc);
+		var dateToUtc = DateTime.SpecifyKind(dateTo, DateTimeKind.Utc);
 
-	public static IEnumerable<Message> GetMessagesForUser(Guid userId, DateTime dateFrom, DateTime dateTo, CleancontrolContext db) =>
-		db
-		   .Messages
-		   .Where(m => m.Sender.Id == userId && m.SentAt >= dateFrom && m.SentAt <= dateTo)
-		   .Select(
-				   m => new Message(
-									m.Id
-								  , m.Sender.Id
-								  , m.Receiver.Id
-								  , m.Content
-								  , m.SentAt
-								   )
-				  );
+		return db
+			  .Messages
+			  .Where(m => m.Receiver.Id == userId && m.SentAt >= dateFromUtc && m.SentAt <= dateToUtc)
+			  .Select(
+					  m => new Message(
+									   m.Id
+									 , m.Sender.Id
+									 , m.Receiver.Id
+									 , m.Content
+									 , m.SentAt
+									  )
+					 );
+	}
 }
