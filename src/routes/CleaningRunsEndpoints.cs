@@ -31,15 +31,17 @@ public static class CleaningRunsEndpoints {
 		   .WithDescription("Fetches all cleaning runs")
 		   .WithSummary("Get all cleaning runs");
 
+
+		group
+		   .MapGet("/{cleaningRunId:guid}", CleaningRuns.GetCleaningRun)
+		   .WithName("GetCleaningRun")
+		   .WithDescription("Fetches a cleaning run by its ID")
+		   .WithSummary("Get a cleaning run by ID");
+
 		group
 		   .MapPost("/", CleaningRuns.CreateCleaningRun)
 		   .WithDescription("Creates a new cleaning run")
 		   .WithSummary("Create a new cleaning run");
-
-		group
-		   .MapGet("/{cleaningRunId:guid}", CleaningRuns.GetCleaningRun)
-		   .WithDescription("Fetches a cleaning run by its ID")
-		   .WithSummary("Get a cleaning run by ID");
 
 		group
 		   .MapDelete("/{cleaningRunId:guid}", CleaningRuns.DeleteCleaningRun)

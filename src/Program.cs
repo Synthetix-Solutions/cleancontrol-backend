@@ -97,8 +97,8 @@ builder
 
 var dataSourceBuilder = new NpgsqlDataSourceBuilder(builder.Configuration.GetConnectionString("CleanControl"));
 
-dataSourceBuilder.MapEnum<Role>();
-dataSourceBuilder.MapEnum<CleaningRunPhase>();
+dataSourceBuilder.MapEnum<Role>($"{dataSourceBuilder.ConnectionStringBuilder.SearchPath}.role");
+dataSourceBuilder.MapEnum<CleaningRunPhase>($"{dataSourceBuilder.ConnectionStringBuilder.SearchPath}.cleaning_run_phase");
 var dataSource = dataSourceBuilder.Build();
 
 builder.Services.AddSignalR();

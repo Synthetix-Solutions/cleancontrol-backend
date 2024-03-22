@@ -19,18 +19,18 @@ public record CleaningRun([SwaggerSchema(ReadOnly = true)] Guid? id
 						, DateTime? date
 						, IEnumerable<User>? cleaners
 						, IEnumerable<Guid>? cleanerIds
-						, Room? StartingRoom
+						, Room? startingRoom
 						, Guid? startingRoomId
-						, CleaningRunPhase Phase
+						, CleaningRunPhase? Phase
 	)
 	 {
 		 /// <inheritdoc />
-		 public CleaningRun(Guid id, DateTime date, Room StartingRoom, IEnumerable<User> cleaners, CleaningRunPhase phase) : this(
+		 public CleaningRun(Guid id, DateTime date, Room startingRoom, IEnumerable<User> cleaners, CleaningRunPhase phase) : this(
 																																  id
 																																, date
 																																, cleaners
 																																, null
-																																, StartingRoom
+																																, startingRoom
 																																, null
 																																, phase
 																																 ) { }

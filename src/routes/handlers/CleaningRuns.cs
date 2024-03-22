@@ -86,7 +86,7 @@ public static class CleaningRuns {
 	///     <see cref="Ok{CleaningRun}" /> with the created cleaning run data, else a <see cref="ProblemHttpResult" />
 	///     containing error details.
 	/// </returns>
-	public static Results<Ok<CleaningRun>, ProblemHttpResult> CreateCleaningRun(CleaningRun cleaningRun, CleancontrolContext db) {
+	public static Results<CreatedAtRoute<CleaningRun>, ProblemHttpResult> CreateCleaningRun(CleaningRun cleaningRun, CleancontrolContext db) {
 		var startingRoom = db.Rooms.Find(cleaningRun.startingRoomId);
 
 		if (startingRoom is null)
@@ -105,11 +105,12 @@ public static class CleaningRuns {
 			return TypedResults.Problem("One or more cleaner IDs not found", statusCode: StatusCodes.Status404NotFound);
 
 		var dbCleaningRun
-			= new CleanControlDb.CleaningRun { Date = cleaningRun.date ?? DateTime.Now, Cleaners = cleaners, StartingRoom = startingRoom};
+			= new CleanControlDb.CleaningRun {Cleaners = cleaners, StartingRoom = startingRoom};
 
+		db.CleaningRuns.Add(dbCleaningRun);
 		db.SaveChanges();
 
-		return TypedResults.Ok(GetReturnCleaningRun(dbCleaningRun));
+		return TypedResults.CreatedAtRoute(GetReturnCleaningRun(dbCleaningRun), "GetCleaningRun", new { cleaningRunId = dbCleaningRun.Id });
 	}
 
 	/// <summary>
