@@ -56,7 +56,6 @@ public static class CleaningRuns {
 	}
 
 
-
 	/// <summary>
 	///     Converts a database cleaning run to a return cleaning run
 	/// </summary>
@@ -70,11 +69,14 @@ public static class CleaningRuns {
 		  , dbCleaningRun.Cleaners.Select(
 										  u => new User(
 														u.Id
-													  , u.Name
-													  , u.Email!
+													  , u
+														   .Name
+													  , u
+														   .Email
+														!
 													   )
 										 )
-			,dbCleaningRun.Phase
+		  , dbCleaningRun.Phase
 		   );
 
 	/// <summary>
@@ -104,13 +106,16 @@ public static class CleaningRuns {
 		if (cleaners.Any(c => c is null))
 			return TypedResults.Problem("One or more cleaner IDs not found", statusCode: StatusCodes.Status404NotFound);
 
-		var dbCleaningRun
-			= new CleanControlDb.CleaningRun {Cleaners = cleaners, StartingRoom = startingRoom};
+		var dbCleaningRun = new CleanControlDb.CleaningRun { Cleaners = cleaners, StartingRoom = startingRoom };
 
 		db.CleaningRuns.Add(dbCleaningRun);
 		db.SaveChanges();
 
-		return TypedResults.CreatedAtRoute(GetReturnCleaningRun(dbCleaningRun), "GetCleaningRun", new { cleaningRunId = dbCleaningRun.Id });
+		return TypedResults.CreatedAtRoute(
+										   GetReturnCleaningRun(dbCleaningRun)
+										 , "GetCleaningRun"
+										 , new { cleaningRunId = dbCleaningRun.Id }
+										  );
 	}
 
 	/// <summary>
@@ -122,7 +127,10 @@ public static class CleaningRuns {
 	///     error details.
 	/// </returns>
 	public static Ok<IEnumerable<CleaningRun>> GetAllCleaningRuns(CleancontrolContext db) {
-		var cleaningRuns = db.CleaningRuns.Select(GetReturnCleaningRun);
+		var cleaningRuns = db
+						  .CleaningRuns
+						  .ToImmutableArray()
+						  .Select(GetReturnCleaningRun);
 
 		return TypedResults.Ok(cleaningRuns);
 	}
@@ -171,7 +179,11 @@ public static class CleaningRuns {
 	/// If the cleaning run is not found, it returns a <see cref="ProblemHttpResult"/> with a 404 status code.
 	/// </remarks>
 	/// <returns>A <see cref="Results{T1, T2, T3}"/> object that contains either an <see cref="Ok{T}"/> result with the updated cleaning run, a <see cref="ProblemHttpResult"/> with an error message, or a <see cref="NotFound"/> result if the cleaning run is not found.</returns>
-	public static Results<ProblemHttpResult, Ok<CleaningRun>, NotFound> UpdateCleaningRunPhase (Guid cleaningRunId, CleaningRunPhase phase,  CleancontrolContext db) {
+	public static Results<ProblemHttpResult, Ok<CleaningRun>, NotFound> UpdateCleaningRunPhase(
+		Guid cleaningRunId
+	  , CleaningRunPhase phase
+	  , CleancontrolContext db
+	) {
 		var dbCleaningRun = db.CleaningRuns.Find(cleaningRunId);
 		if (dbCleaningRun is null)
 			return TypedResults.Problem($"Cleaning run with ID {cleaningRunId} not found", statusCode: StatusCodes.Status404NotFound);
