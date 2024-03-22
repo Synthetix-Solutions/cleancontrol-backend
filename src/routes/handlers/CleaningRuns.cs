@@ -107,6 +107,7 @@ public static class CleaningRuns {
 		var dbCleaningRun
 			= new CleanControlDb.CleaningRun { Date = cleaningRun.date ?? DateTime.Now, Cleaners = cleaners, StartingRoom = startingRoom};
 
+		db.CleaningRuns.Add(dbCleaningRun);
 		db.SaveChanges();
 
 		return TypedResults.Ok(GetReturnCleaningRun(dbCleaningRun));
