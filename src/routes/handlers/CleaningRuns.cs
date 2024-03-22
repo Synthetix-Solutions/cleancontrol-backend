@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using CleanControlBackend.Schemas;
 using CleanControlDb;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using CleaningRun = CleanControlBackend.Schemas.CleaningRun;
 using Room = CleanControlBackend.Schemas.Room;
 
@@ -126,10 +127,25 @@ public static class CleaningRuns {
 	///     <see cref="Ok{IEnumerable}" /> with all cleaning runs, else a <see cref="ProblemHttpResult" /> containing
 	///     error details.
 	/// </returns>
-	public static Ok<IEnumerable<CleaningRun>> GetAllCleaningRuns(CleancontrolContext db) {
+	public static async Task<Ok<IEnumerable<CleaningRun>>> GetAllCleaningRuns(CleancontrolContext db
+																			, HttpContext context
+																			, UserManager<CleanControlUser> userManager
+	) {
+		var currentUser = userManager.GetUserAsync(context.User)
+									 .Result!;
+		var currentUserRole = await currentUser.GetRole(userManager);
+
 		var cleaningRuns = db
 						  .CleaningRuns
-						  .ToImmutableArray()
+						  .ToList()
+						  .Where(
+								 cr => (cr, currentUserRole) switch {
+										   (_, Role.Admin) => true
+										 , ({ Phase: not CleaningRunPhase.Finished, Cleaners: { } cleaners }, Role.Cleaner) =>
+											   cleaners.Contains(currentUser)
+										 , _ => false
+									   }
+								)
 						  .Select(GetReturnCleaningRun);
 
 		return TypedResults.Ok(cleaningRuns);

@@ -34,6 +34,24 @@ public static class Tasks {
 		return TypedResults.Ok();
 	}
 
+	public static Results<Ok, ProblemHttpResult> AssignRooms(Guid taskId, IEnumerable<Guid> roomIds, CleancontrolContext db) {
+		var task = db.CleaningTasks.Find(taskId);
+		var rooms = roomIds
+				   .Select(id => db.Rooms.Find(id))
+				   .ToList();
+
+		return task switch {
+				   null => TypedResults.Problem($"Task with ID {taskId} not found", statusCode: StatusCodes.Status404NotFound)
+				 , _ when rooms.Contains(null) => TypedResults.Problem("One or more rooms not found", statusCode: StatusCodes.Status404NotFound)
+				 , _ => AssignRoomsToTask(task, rooms!)
+			   };
+	}
+
+	private static Results<Ok, ProblemHttpResult> AssignRoomsToTask(CleanControlDb.CleaningTask task, ICollection<Room> rooms) {
+		task.Rooms = rooms;
+		return TypedResults.Ok();
+	}
+
 	/// <summary>
 	/// Updates a specific task in the database.
 	/// </summary>
@@ -118,5 +136,6 @@ public static class Tasks {
 	/// This method retrieves all tasks from the database. It does this by selecting all tasks from the database and mapping them to the returnable task objects using the CreateReturnTask method.
 	/// </remarks>
 	/// <returns>An <see cref="Ok{T}"/> result that contains a list of all tasks in the database.</returns>
-	public static Ok<IEnumerable<CleaningTask>> GetAllTasks(CleancontrolContext db) => TypedResults.Ok(db.CleaningTasks.Select(CleaningTask.FromDbRoomCleaningTask));
+	public static Ok<IEnumerable<CleaningTask>> GetAllTasks(CleancontrolContext db) =>
+		TypedResults.Ok(db.CleaningTasks.Select(CleaningTask.FromDbRoomCleaningTask));
 }
