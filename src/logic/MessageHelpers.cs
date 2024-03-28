@@ -83,13 +83,13 @@ public static class MessageHelpers {
 	/// Each message includes the sender, receiver, content, and the time it was sent.
 	/// </remarks>
 	/// <returns>An IEnumerable of Message objects that represent the messages sent by the user within the specified date range.</returns>
-	public static IEnumerable<Message> GetMessagesForUser(Guid userId, DateTime dateFrom, DateTime dateTo, CleancontrolContext db) {
+	public static IEnumerable<Message> GetMessagesForUser(Guid userId,Guid senderId, DateTime dateFrom, DateTime dateTo, CleancontrolContext db) {
 		var dateFromUtc = DateTime.SpecifyKind(dateFrom, DateTimeKind.Utc);
 		var dateToUtc = DateTime.SpecifyKind(dateTo, DateTimeKind.Utc);
 
 		return db
 			  .Messages
-			  .Where(m => m.Receiver.Id == userId && m.SentAt >= dateFromUtc && m.SentAt <= dateToUtc)
+			  .Where(m => m.Receiver.Id == userId && m.Sender.Id == senderId && m.SentAt >= dateFromUtc && m.SentAt <= dateToUtc )
 			  .Select(
 					  m => new Message(
 									   m.Id
