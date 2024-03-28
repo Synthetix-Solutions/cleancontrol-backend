@@ -92,7 +92,11 @@ public static class MessageHelpers {
 
 		return db
 			  .Messages
-			  .Where(m => m.Receiver.Id == userId && m.Sender.Id == senderId && m.SentAt >= dateFromUtc && m.SentAt <= dateToUtc)
+			  .Where(
+					 m => (m.Receiver.Id == userId && m.Sender.Id == senderId || m.Sender.Id == userId && m.Receiver.Id == senderId)
+					   && m.SentAt >= dateFromUtc
+					   && m.SentAt <= dateToUtc
+					)
 			  .Select(
 					  m => new Message(
 									   m.Id
