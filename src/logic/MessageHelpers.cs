@@ -56,7 +56,7 @@ public static class MessageHelpers {
 			  .Where(m => m.Receiver.Id == userId || m.Sender.Id == userId)
 			  .ToList()
 			  .GroupBy(
-					   m => m.Sender.Id == userId ? m.Sender : m.Receiver
+					   m => m.Sender.Id == userId ? m.Receiver : m.Sender
 					 , (sender, messages) => new { Sender = sender, LastMessage = messages.MaxBy(m => m.SentAt)! }
 					  )
 			  .Select(
