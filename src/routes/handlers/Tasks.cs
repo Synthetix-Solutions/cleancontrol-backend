@@ -34,6 +34,18 @@ public static class Tasks {
 		return TypedResults.Ok();
 	}
 
+	/// <summary>
+	/// Assigns rooms to a specific task in the database.
+	/// </summary>
+	/// <param name="taskId">The ID of the task to which rooms are to be assigned.</param>
+	/// <param name="roomIds">The IDs of the rooms to be assigned to the task.</param>
+	/// <param name="db">The database context.</param>
+	/// <remarks>
+	/// This method assigns rooms to a specific task in the database. It does this by finding the task and the rooms in the database using the provided task ID and room IDs.
+	/// If the task or any of the rooms are not found, it returns a <see cref="ProblemHttpResult"/> with a message indicating that the task or the rooms were not found and a 404 status code.
+	/// If the task and all the rooms are found, it assigns the rooms to the task and returns an <see cref="Ok"/> result.
+	/// </remarks>
+	/// <returns>A <see cref="Results{T1, T2}"/> object that contains either an <see cref="Ok"/> result if the rooms were successfully assigned to the task, or a <see cref="ProblemHttpResult"/> if the task or any of the rooms were not found.</returns>
 	public static Results<Ok, ProblemHttpResult> AssignRooms(Guid taskId, IEnumerable<Guid> roomIds, CleancontrolContext db) {
 		var task = db.CleaningTasks.Find(taskId);
 		var rooms = roomIds
@@ -78,7 +90,7 @@ public static class Tasks {
 	/// <summary>
 	/// Retrieves a specific task from the database.
 	/// </summary>
-	/// <param name="id">The ID of the task to retrieve.</param>
+	/// <param name="taskId">The ID of the task to retrieve.</param>
 	/// <param name="db">The database context.</param>
 	/// <remarks>
 	/// This method retrieves a specific task from the database. It does this by finding the task in the database using the provided task ID.
@@ -86,10 +98,10 @@ public static class Tasks {
 	/// If the task is found, it creates a returnable task object with the properties from the found task and returns an <see cref="Ok{T}"/> result with the returnable task.
 	/// </remarks>
 	/// <returns>A <see cref="Results{T1, T2}"/> object that contains either an <see cref="Ok{T}"/> result with the returnable task, or a <see cref="ProblemHttpResult"/> if the task was not found.</returns>
-	public static Results<Ok<CleaningTask>, ProblemHttpResult> GetTask(Guid id, CleancontrolContext db) {
-		var dbTask = db.CleaningTasks.Find(id);
+	public static Results<Ok<CleaningTask>, ProblemHttpResult> GetTask(Guid taskId, CleancontrolContext db) {
+		var dbTask = db.CleaningTasks.Find(taskId);
 		if (dbTask is null)
-			return TypedResults.Problem($"Task with ID {id} not found", statusCode: StatusCodes.Status404NotFound);
+			return TypedResults.Problem($"Task with ID {taskId} not found", statusCode: StatusCodes.Status404NotFound);
 
 		var returnTask = new CleaningTask(
 										  dbTask.Id
