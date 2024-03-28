@@ -60,6 +60,11 @@ public static class TasksEndpoints {
 		   .WithDescription("Sets the assigned rooms of a task")
 		   .WithSummary("Sets the assigned rooms of a task");
 
+		group
+		   .MapGet("/{taskId:guid}/rooms", Tasks.GetAssignedRooms)
+		   .WithDescription("Gets the assigned rooms of a task")
+		   .WithSummary("Gets the assigned rooms of a task");
+
 		return group;
 	}
 }

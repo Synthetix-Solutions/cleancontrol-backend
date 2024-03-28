@@ -52,16 +52,32 @@ public static class Tasks {
 				   .Select(id => db.Rooms.Find(id))
 				   .ToList();
 
+		var assignRooms = ( CleanControlDb.CleaningTask t, ICollection<Room> r) => {
+							 var ret =  AssignRoomsToTask(t, r);
+							  db.SaveChanges();
+							  return ret;
+						  };
+
 		return task switch {
 				   null => TypedResults.Problem($"Task with ID {taskId} not found", statusCode: StatusCodes.Status404NotFound)
 				 , _ when rooms.Contains(null) => TypedResults.Problem("One or more rooms not found", statusCode: StatusCodes.Status404NotFound)
-				 , _ => AssignRoomsToTask(task, rooms!)
+				 , _ => assignRooms(task, rooms!)
 			   };
 	}
 
 	private static Results<Ok, ProblemHttpResult> AssignRoomsToTask(CleanControlDb.CleaningTask task, ICollection<Room> rooms) {
 		task.Rooms = rooms;
 		return TypedResults.Ok();
+	}
+
+	public static Results<Ok<IEnumerable<Schemas.Room>>, NotFound> GetAssignedRooms(Guid taskId, CleancontrolContext db) {
+		var task = db.CleaningTasks.Find(taskId);
+		if (task is null)
+			return TypedResults.NotFound();
+
+		var returnRooms = task.Rooms.Select(Schemas.Room.FromDbRoom);
+
+		return TypedResults.Ok(returnRooms);
 	}
 
 	/// <summary>
