@@ -30,8 +30,9 @@ builder
 						   , p => p
 								 .WithOrigins(
 											  "http://localhost:5240"
-											, "https://gourav-d.github.io"
 											, "http://49.13.203.173:3000"
+											, "https://*.synthetix-solutions.com:3000"
+											, "https://synthetix-solutions.com:3000"
 											 )
 								 .AllowAnyMethod()
 								 .AllowAnyHeader()
@@ -125,7 +126,7 @@ if (!app.Environment.IsDevelopment()) {
 	app.UseStatusCodePages();
 }
 
-app.Use(async (context, next) => await AuthQueryStringToHeader(context, next));
+UseExtensions.Use((IApplicationBuilder)app, async (HttpContext context, Func<Task> next) => await AuthQueryStringToHeader(context, next));
 app.UseCors(allowAllPolicyName);
 app.UseAuthentication();
 app.UseAuthorization();
