@@ -52,14 +52,16 @@ public class ChatHub(CleancontrolContext db, UserManager<CleanControlUser> userM
 	/// <summary>
 	/// Gets the chat history (received messages) for the calling user.
 	/// </summary>
+	/// <param name="senderId">ID of the other User in the conversation.</param>
 	/// <param name="dateFrom">The start date for the period for which to retrieve chat history. Messages sent on or after this date will be included in the chat history.</param>
 	/// <param name="dateTo">The end date for the period for which to retrieve chat history. Messages sent up to and including this date will be included in the chat history.</param>
 	/// <returns>The chat history for the calling user within the specified date range.</returns>
-	public async Task GetChatHistory(DateTime dateFrom, DateTime dateTo) {
+	public async Task GetChatHistory(Guid senderId ,DateTime dateFrom, DateTime dateTo) {
 
 
 		var chatHistory = MessageHelpers.GetMessagesForUser(
 															CallingUser.Id
+														   ,senderId
 														  , dateFrom
 														  , dateTo
 														  , db

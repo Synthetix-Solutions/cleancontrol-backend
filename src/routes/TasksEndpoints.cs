@@ -41,19 +41,29 @@ public static class TasksEndpoints {
 		   .WithSummary("Create a new task");
 
 		group
-		   .MapGet("/{taskId}", Tasks.GetTask)
+		   .MapGet("/{taskId:guid}", Tasks.GetTask)
 		   .WithDescription("Fetches a task by its ID")
 		   .WithSummary("Get a task by ID");
 
 		group
-		   .MapPut("/{taskId}", Tasks.UpdateTask)
+		   .MapPut("/{taskId:guid}", Tasks.UpdateTask)
 		   .WithDescription("Updates a task by its ID")
 		   .WithSummary("Update a task");
 
 		group
-		   .MapDelete("/{taskId}", Tasks.DeleteTask)
+		   .MapDelete("/{taskId:guid}", Tasks.DeleteTask)
 		   .WithDescription("Deletes a task by its ID")
 		   .WithSummary("Delete a task");
+
+		group
+		   .MapPut("/{taskId:guid}/rooms", Tasks.AssignRooms)
+		   .WithDescription("Sets the assigned rooms of a task")
+		   .WithSummary("Sets the assigned rooms of a task");
+
+		group
+		   .MapGet("/{taskId:guid}/rooms", Tasks.GetAssignedRooms)
+		   .WithDescription("Gets the assigned rooms of a task")
+		   .WithSummary("Gets the assigned rooms of a task");
 
 		return group;
 	}
