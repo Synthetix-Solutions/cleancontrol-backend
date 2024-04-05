@@ -21,7 +21,8 @@ public static class Users {
 	/// <param name="db">The database context.</param>
 	/// <param name="userManager">The user manager.</param>
 	/// <returns>
-	///     <see cref="Ok" /> if the user was successfully deleted, else a <see cref="ProblemHttpResult" /> containing error details.
+	///     <see cref="Ok" /> if the user was successfully deleted, else a <see cref="ProblemHttpResult" /> containing error
+	///     details.
 	///     If the user is not found, it returns <see cref="NotFound" />.
 	/// </returns>
 	public static Results<Ok, ProblemHttpResult, NotFound> DeleteUser(Guid userId
@@ -128,7 +129,8 @@ public static class Users {
 	/// <param name="userManager">The user manager.</param>
 	/// <param name="context">The HTTP context.</param>
 	/// <returns>
-	///     <see cref="Ok{User}" /> with the current user data, else a <see cref="ProblemHttpResult" /> containing error details.
+	///     <see cref="Ok{User}" /> with the current user data, else a <see cref="ProblemHttpResult" /> containing error
+	///     details.
 	///     If the user is not found, it returns <see cref="NotFound" />.
 	///     If the user is not authorized to perform the operation, it returns <see cref="ForbidHttpResult" />.
 	/// </returns>

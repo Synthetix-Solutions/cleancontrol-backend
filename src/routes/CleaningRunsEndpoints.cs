@@ -1,6 +1,7 @@
 #region
 
 using CleanControlBackend.Routes.Handlers;
+using CleanControlBackend.Schemas;
 using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 
 #endregion
@@ -19,11 +20,11 @@ public static class CleaningRunsEndpoints {
 		app
 		   .MapGroup("/cleaning_runs")
 		   .MapCleaningRunsApi()
+		   .RequireAuthorization(Policies.AdminOrCleanerOnly)
 		   .AddFluentValidationAutoValidation()
 		   .WithOpenApi()
 		   .WithTags("Cleaning runs");
 	}
-
 
 	private static RouteGroupBuilder MapCleaningRunsApi(this RouteGroupBuilder group) {
 		group

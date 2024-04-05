@@ -1,6 +1,7 @@
 #region
 
 using CleanControlBackend.Routes.Handlers;
+using CleanControlBackend.Schemas;
 using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 
 #endregion
@@ -18,6 +19,7 @@ public static class TasksEndpoints {
 	public static void Map(WebApplication app) {
 		app
 		   .MapGroup("/tasks")
+		   .RequireAuthorization(Policies.AdminOrCleanerOnly)
 		   .MapTasksApi()
 		   .AddFluentValidationAutoValidation()
 		   .WithOpenApi()

@@ -19,7 +19,7 @@ public static class UsersEndpoints {
 	public static void Map(WebApplication app) {
 		app
 		   .MapGroup("/users")
-			// .RequireAuthorization(Policies.AdminOrCleanerOnly)
+		   .RequireAuthorization(Policies.AdminOrCleanerOnly)
 		   .MapUserApi()
 		   .AddFluentValidationAutoValidation()
 		   .WithOpenApi()

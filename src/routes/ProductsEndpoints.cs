@@ -5,6 +5,7 @@
 #region
 
 using CleanControlBackend.Routes.Handlers;
+using CleanControlBackend.Schemas;
 using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 
 #endregion
@@ -23,6 +24,7 @@ public static class ProductsEndpoints {
 		app
 		   .MapGroup("/products")
 		   .MapApi()
+		   .RequireAuthorization(Policies.AdminOrCleanerOnly)
 		   .AddFluentValidationAutoValidation()
 		   .WithOpenApi()
 		   .WithTags("Products");

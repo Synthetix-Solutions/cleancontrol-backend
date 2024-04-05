@@ -152,16 +152,22 @@ public static class CleaningRuns {
 	}
 
 	/// <summary>
-	/// Retrieves the next room to be cleaned in a cleaning run.
+	///     Retrieves the next room to be cleaned in a cleaning run.
 	/// </summary>
 	/// <param name="cleaningRunId">The ID of the cleaning run.</param>
 	/// <param name="db">The database context.</param>
 	/// <remarks>
-	/// This method retrieves the next room to be cleaned in a cleaning run. It does this by finding the cleaning run in the database,
-	/// getting the starting room of the cleaning run, and then finding the next room in the database that has a cleaning task due.
-	/// If no such room is found, it returns a NotFound result.
+	///     This method retrieves the next room to be cleaned in a cleaning run. It does this by finding the cleaning run in
+	///     the database,
+	///     getting the starting room of the cleaning run, and then finding the next room in the database that has a cleaning
+	///     task due.
+	///     If no such room is found, it returns a NotFound result.
 	/// </remarks>
-	/// <returns>A <see cref="Results{T1, T2, T3}"/> object that contains either an <see cref="Ok{T}"/> result with the next room to be cleaned, a <see cref="ProblemHttpResult"/> with an error message, or a <see cref="NotFound"/> result if no next room is found.</returns>
+	/// <returns>
+	///     A <see cref="Results{T1, T2, T3}" /> object that contains either an <see cref="Ok{T}" /> result with the next
+	///     room to be cleaned, a <see cref="ProblemHttpResult" /> with an error message, or a <see cref="NotFound" /> result
+	///     if no next room is found.
+	/// </returns>
 	public static Results<Ok<Room>, ProblemHttpResult, NotFound> GetNextRoom(Guid cleaningRunId, CleancontrolContext db) {
 		var dbCleaningRun = db.CleaningRuns.Find(cleaningRunId);
 		if (dbCleaningRun is null)
@@ -184,17 +190,21 @@ public static class CleaningRuns {
 	}
 
 	/// <summary>
-	/// Updates the phase of a cleaning run.
+	///     Updates the phase of a cleaning run.
 	/// </summary>
 	/// <param name="cleaningRunId">The ID of the cleaning run to update.</param>
 	/// <param name="phase">The new phase for the cleaning run.</param>
 	/// <param name="db">The database context.</param>
 	/// <remarks>
-	/// This method updates the phase of a cleaning run. It does this by finding the cleaning run in the database,
-	/// updating its phase, and then saving the changes to the database.
-	/// If the cleaning run is not found, it returns a <see cref="ProblemHttpResult"/> with a 404 status code.
+	///     This method updates the phase of a cleaning run. It does this by finding the cleaning run in the database,
+	///     updating its phase, and then saving the changes to the database.
+	///     If the cleaning run is not found, it returns a <see cref="ProblemHttpResult" /> with a 404 status code.
 	/// </remarks>
-	/// <returns>A <see cref="Results{T1, T2, T3}"/> object that contains either an <see cref="Ok{T}"/> result with the updated cleaning run, a <see cref="ProblemHttpResult"/> with an error message, or a <see cref="NotFound"/> result if the cleaning run is not found.</returns>
+	/// <returns>
+	///     A <see cref="Results{T1, T2, T3}" /> object that contains either an <see cref="Ok{T}" /> result with the
+	///     updated cleaning run, a <see cref="ProblemHttpResult" /> with an error message, or a <see cref="NotFound" /> result
+	///     if the cleaning run is not found.
+	/// </returns>
 	public static Results<ProblemHttpResult, Ok<CleaningRun>, NotFound> UpdateCleaningRunPhase(
 		Guid cleaningRunId
 	  , CleaningRunPhase phase
