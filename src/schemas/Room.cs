@@ -20,4 +20,4 @@ public record Room([SwaggerSchema(ReadOnly = true)] Guid id, string roomNumber) 
 	/// <param name="room">The database Room object.</param>
 	/// <returns>A new instance of the Room record.</returns>
 	public static Room FromDbRoom(CleanControlDb.Room room) => new(room.Id, room.Number);
-};
+}

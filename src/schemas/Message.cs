@@ -1,4 +1,5 @@
 namespace CleanControlBackend.Schemas;
+
 /// <summary>
 ///     Represents a message DTO.
 /// </summary>

@@ -8,11 +8,11 @@ using Microsoft.AspNetCore.Identity;
 namespace CleanControlBackend.Schemas.Logic;
 
 /// <summary>
-/// Helpers for messaging
+///     Helpers for messaging
 /// </summary>
 public static class MessageHelpers {
 	/// <summary>
-	/// Creates a new message between two users.
+	///     Creates a new message between two users.
 	/// </summary>
 	/// <param name="senderId">The ID of the user sending the message.</param>
 	/// <param name="receiverId">The ID of the user receiving the message.</param>
@@ -40,16 +40,19 @@ public static class MessageHelpers {
 	}
 
 	/// <summary>
-	/// Retrieves the chat instances for a specific user.
+	///     Retrieves the chat instances for a specific user.
 	/// </summary>
 	/// <param name="userId">The ID of the user for whom to retrieve chat instances.</param>
 	/// <param name="db">The database context.</param>
 	/// <param name="userManager">The user manager.</param>
 	/// <remarks>
-	/// This method retrieves all chat instances that the specified user is a part of.
-	/// Each chat instance includes the participants and the messages exchanged.
+	///     This method retrieves all chat instances that the specified user is a part of.
+	///     Each chat instance includes the participants and the messages exchanged.
 	/// </remarks>
-	/// <returns>A Task that represents the asynchronous operation. The task result contains the chat instances for the specified user.</returns>
+	/// <returns>
+	///     A Task that represents the asynchronous operation. The task result contains the chat instances for the
+	///     specified user.
+	/// </returns>
 	public static IEnumerable<Chat> GetChatsForUser(Guid userId, CleancontrolContext db, UserManager<CleanControlUser> userManager) {
 		return db
 			  .Messages
@@ -75,17 +78,20 @@ public static class MessageHelpers {
 	}
 
 	/// <summary>
-	/// Retrieves the messages for a specific user within a specified date range.
+	///     Retrieves the messages for a specific user within a specified date range.
 	/// </summary>
 	/// <param name="userId">The ID of the user for whom to retrieve messages.</param>
 	/// <param name="dateFrom">The start date of the range within which to retrieve messages.</param>
 	/// <param name="dateTo">The end date of the range within which to retrieve messages.</param>
 	/// <param name="db">The database context.</param>
 	/// <remarks>
-	/// This method retrieves all messages that the specified user has sent within the specified date range.
-	/// Each message includes the sender, receiver, content, and the time it was sent.
+	///     This method retrieves all messages that the specified user has sent within the specified date range.
+	///     Each message includes the sender, receiver, content, and the time it was sent.
 	/// </remarks>
-	/// <returns>An IEnumerable of Message objects that represent the messages sent by the user within the specified date range.</returns>
+	/// <returns>
+	///     An IEnumerable of Message objects that represent the messages sent by the user within the specified date
+	///     range.
+	/// </returns>
 	public static IEnumerable<Message> GetMessagesForUser(Guid userId, Guid senderId, DateTime dateFrom, DateTime dateTo, CleancontrolContext db) {
 		var dateFromUtc = DateTime.SpecifyKind(dateFrom, DateTimeKind.Utc);
 		var dateToUtc = DateTime.SpecifyKind(dateTo, DateTimeKind.Utc);

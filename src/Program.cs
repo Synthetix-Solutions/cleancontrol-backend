@@ -172,9 +172,8 @@ static async Task AuthQueryStringToHeader(HttpContext context, Func<Task> next) 
 				   .Value
 				   .Split('&')
 				   .FirstOrDefault(pair => pair.StartsWith("access_token="))?["access_token=".Length..];
-		if (!string.IsNullOrWhiteSpace(token)) {
+		if (!string.IsNullOrWhiteSpace(token))
 			context.Request.Headers.Append("Authorization", $"Bearer {token}");
-		}
 	}
 
 	await next?.Invoke()!;

@@ -18,14 +18,19 @@ namespace CleanControlBackend.Schemas;
 [SuppressMessage("ReSharper", "InconsistentNaming")]
 public record CleaningTask([SwaggerSchema(ReadOnly = true)] Guid Id, string name, string? description, int? recurrenceInterval, bool onCheckout) {
 	/// <summary>
-	/// Creates a returnable cleaning task object from a database cleaning task object.
+	///     Creates a returnable cleaning task object from a database cleaning task object.
 	/// </summary>
 	/// <param name="dbTask">The database cleaning task object.</param>
 	/// <remarks>
-	/// This method creates a returnable cleaning task object from a database cleaning task object. It does this by creating a new cleaning task object and populating it with the properties of the database cleaning task object.
-	/// The returnable cleaning task object is used to return cleaning task data to the client in a format that is suitable for the client.
+	///     This method creates a returnable cleaning task object from a database cleaning task object. It does this by
+	///     creating a new cleaning task object and populating it with the properties of the database cleaning task object.
+	///     The returnable cleaning task object is used to return cleaning task data to the client in a format that is suitable
+	///     for the client.
 	/// </remarks>
-	/// <returns>A <see cref="CleaningTask"/> object that contains the data of the database cleaning task object in a format that is suitable for the client.</returns>
+	/// <returns>
+	///     A <see cref="CleaningTask" /> object that contains the data of the database cleaning task object in a format
+	///     that is suitable for the client.
+	/// </returns>
 	public static CleaningTask FromDbRoomCleaningTask(CleanControlDb.CleaningTask dbTask) =>
 		new(
 			dbTask.Id
@@ -34,4 +39,4 @@ public record CleaningTask([SwaggerSchema(ReadOnly = true)] Guid Id, string name
 		  , dbTask.RecurrenceInterval
 		  , dbTask.OnCheckout
 		   );
-};
+}

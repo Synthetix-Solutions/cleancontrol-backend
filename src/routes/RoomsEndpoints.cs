@@ -1,6 +1,7 @@
 #region
 
 using CleanControlBackend.Routes.Handlers;
+using CleanControlBackend.Schemas;
 using SharpGrip.FluentValidation.AutoValidation.Endpoints.Extensions;
 
 #endregion
@@ -20,6 +21,7 @@ public static class RoomsEndpoints {
 				   .MapGroup("/rooms")
 				   .MapRoomsApi()
 				   .AddFluentValidationAutoValidation()
+				   .RequireAuthorization(Policies.AdminOrCleanerOnly)
 				   .WithOpenApi()
 				   .WithTags("Rooms");
 
