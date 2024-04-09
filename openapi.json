@@ -418,8 +418,8 @@
           "required": true
         },
         "responses": {
-          "200": {
-            "description": "OK",
+          "201": {
+            "description": "Created",
             "content": {
               "application/json": {
                 "schema": {
@@ -438,6 +438,7 @@
         ],
         "summary": "Gets a cleaning run by its ID",
         "description": "Fetches a cleaning run by its ID",
+        "operationId": "GetCleaningRun",
         "parameters": [
           {
             "name": "cleaningRunId",
@@ -493,8 +494,8 @@
         "tags": [
           "Cleaning runs"
         ],
-        "summary": "Get the next room to clean",
-        "description": "Fetches the next room to clean",
+        "summary": "Retrieves the next room to be cleaned in a cleaning run.",
+        "description": "This method retrieves the next room to be cleaned in a cleaning run. It does this by finding the cleaning run in\r\nthe database,\r\ngetting the starting room of the cleaning run, and then finding the next room in the database that has a cleaning\r\ntask due.\r\nIf no such room is found, it returns a NotFound result.",
         "parameters": [
           {
             "name": "cleaningRunId",
@@ -524,13 +525,58 @@
         }
       }
     },
+    "/cleaning_runs/{cleaningRunId}/phase": {
+      "patch": {
+        "tags": [
+          "Cleaning runs"
+        ],
+        "summary": "Updates the phase of a cleaning run.",
+        "description": "This method updates the phase of a cleaning run. It does this by finding the cleaning run in the database,\r\nupdating its phase, and then saving the changes to the database.\r\nIf the cleaning run is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult with a 404 status code.",
+        "parameters": [
+          {
+            "name": "cleaningRunId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "phase",
+            "in": "query",
+            "required": true,
+            "style": "form",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CleaningRun"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
     "/products": {
       "get": {
         "tags": [
           "Products"
         ],
-        "summary": "Get all products",
-        "description": "Fetches all products",
+        "summary": "Retrieves all products from the database.",
+        "description": "This method retrieves all products from the database. It does this by selecting all products from the database and\r\nreturning them as a list.",
         "responses": {
           "200": {
             "description": "OK",
@@ -551,8 +597,8 @@
         "tags": [
           "Products"
         ],
-        "summary": "Create a new product",
-        "description": "Creates a new product",
+        "summary": "Creates a new product in the database.",
+        "description": "This method creates a new product in the database. It does this by creating a new product object with the provided\r\nproduct details,\r\nadding it to the database, and then saving the changes to the database.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -582,8 +628,8 @@
         "tags": [
           "Products"
         ],
-        "summary": "Get a product by ID",
-        "description": "Fetches a product by its ID",
+        "summary": "Retrieves a product from the database.",
+        "description": "This method retrieves a product from the database. It does this by finding the product in the database using the\r\nprovided product ID.\r\nIf the product is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult with a 404 status code and an error\r\nmessage.\r\nIf the product is found, it returns an Microsoft.AspNetCore.Http.HttpResults.Ok`1 result with the product.",
         "parameters": [
           {
             "name": "productId",
@@ -613,8 +659,8 @@
         "tags": [
           "Products"
         ],
-        "summary": "Update a product",
-        "description": "Updates a product by its ID",
+        "summary": "Updates a product in the database.",
+        "description": "This method updates a product in the database. It does this by finding the product in the database using the\r\nprovided product ID.\r\nIf the product is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult with a 404 status code and an error\r\nmessage.\r\nIf the product is found, its properties are updated with the values from the provided product object and the\r\nchanges are saved.",
         "parameters": [
           {
             "name": "productId",
@@ -654,8 +700,8 @@
         "tags": [
           "Products"
         ],
-        "summary": "Delete a product",
-        "description": "Deletes a product by its ID",
+        "summary": "Deletes a product from the database.",
+        "description": "This method deletes a product from the database. It does this by finding the product in the database using the\r\nprovided product ID.\r\nIf the product is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult with a 404 status code and an error\r\nmessage.\r\nIf the product is found, it is removed from the database and the changes are saved.",
         "parameters": [
           {
             "name": "productId",
@@ -681,8 +727,8 @@
           "Rooms",
           "Room refills"
         ],
-        "summary": "Get all room refills",
-        "description": "Fetches all room refills",
+        "summary": "Retrieves all room refills from the database.",
+        "description": "This method retrieves all room refills from the database. It does this by selecting all room refills from the\r\ndatabase and returning them as a list.\r\nEach room refill in the list contains the associated product information and the refill amount.",
         "responses": {
           "200": {
             "description": "OK",
@@ -704,8 +750,8 @@
           "Rooms",
           "Room refills"
         ],
-        "summary": "Create a new room refill",
-        "description": "Creates a new room refill",
+        "summary": "Adds a list of room refills to the database.",
+        "description": "This method adds a list of room refills to the database. It does this by finding the room in the database using the\r\nprovided room ID,\r\nand then adding each refill in the list to the database associated with the room.\r\nIf the room is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult with a 404 status code and an error\r\nmessage.\r\nIf the room is found and the refills are successfully added, it saves the changes to the database and returns an\r\nMicrosoft.AspNetCore.Http.HttpResults.Ok result.",
         "parameters": [
           {
             "name": "roomId",
@@ -731,8 +777,8 @@
           "Rooms",
           "Room refills"
         ],
-        "summary": "Get a room refill by ID",
-        "description": "Fetches a room refill by its ID",
+        "summary": "Retrieves a specific room refill from the database.",
+        "description": "This method retrieves a specific room refill from the database. It does this by finding the room refill in the\r\ndatabase using the provided room ID and refill ID.\r\nIf the room refill is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.NotFound result.\r\nIf the room refill is found, it returns an Microsoft.AspNetCore.Http.HttpResults.Ok`1 result with the room refill.",
         "parameters": [
           {
             "name": "roomId",
@@ -776,8 +822,8 @@
           "Rooms",
           "Room refills"
         ],
-        "summary": "Delete a room refill",
-        "description": "Deletes a room refill by its ID",
+        "summary": "Deletes a room refill from the database.",
+        "description": "This method deletes a room refill from the database. It does this by finding the room refill in the database using\r\nthe provided refill ID.\r\nIf the room refill is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.NotFound result.\r\nIf the room refill is found, it removes it from the database and saves the changes, then returns an\r\nMicrosoft.AspNetCore.Http.HttpResults.Ok result.",
         "parameters": [
           {
             "name": "refillId",
@@ -806,8 +852,8 @@
           "Rooms",
           "Room tasks"
         ],
-        "summary": "Get all room tasks",
-        "description": "Fetches all room tasks",
+        "summary": "Retrieves all due room tasks from the database.",
+        "description": "This method retrieves all due room tasks from the database. It does this by finding the room in the database using\r\nthe provided room ID,\r\nand then selecting all cleaning tasks for the room where the next due date is less than or equal to the current\r\ndate.\r\nIf the room is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult with a 404 status code and an error\r\nmessage.\r\nIf the room is found and the tasks are successfully retrieved, it returns an Microsoft.AspNetCore.Http.HttpResults.Ok`1 result with the\r\nlist of tasks.",
         "parameters": [
           {
             "name": "roomId",
@@ -843,8 +889,8 @@
           "Rooms",
           "Room tasks"
         ],
-        "summary": "Get a room task by ID",
-        "description": "Fetches a room task by its ID",
+        "summary": "Retrieves a specific room task from the database.",
+        "description": "This method retrieves a specific room task from the database. It does this by finding the task in the database\r\nusing the provided task ID.\r\nIf the task is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult with a 404 status code and an error\r\nmessage.\r\nIf the task is found, it returns an Microsoft.AspNetCore.Http.HttpResults.Ok`1 result with the task.",
         "parameters": [
           {
             "name": "taskId",
@@ -885,8 +931,8 @@
           "Rooms",
           "Room tasks"
         ],
-        "summary": "Delete a room task",
-        "description": "Deletes a room task by its ID",
+        "summary": "Deletes a specific room task from the database.",
+        "description": "This method deletes a specific room task from the database. It does this by finding the room and the task in the\r\ndatabase using the provided room ID and task ID.\r\nIf the room or the task is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult with a 404 status code and an\r\nerror message.\r\nIf the room and the task are found, it creates a new room cleanup with the found room and task, adds it to the\r\ndatabase, saves the changes, and then returns an Microsoft.AspNetCore.Http.HttpResults.Ok result.",
         "parameters": [
           {
             "name": "roomId",
@@ -921,8 +967,8 @@
         "tags": [
           "Rooms"
         ],
-        "summary": "Get all rooms",
-        "description": "Fetches all rooms",
+        "summary": "Retrieves all rooms from the database.",
+        "description": "This method retrieves all rooms from the database. It does this by selecting all rooms from the database and\r\nmapping them to the returnable room objects.",
         "responses": {
           "200": {
             "description": "OK",
@@ -943,8 +989,8 @@
         "tags": [
           "Rooms"
         ],
-        "summary": "Create a new room",
-        "description": "Creates a new room",
+        "summary": "Creates a new room in the database.",
+        "description": "This method creates a new room in the database. It does this by checking if a room with the same number already\r\nexists in the database.\r\nIf a room with the same number already exists, it returns a Microsoft.AspNetCore.Http.HttpResults.Conflict result.\r\nIf a room with the same number does not exist, it creates a new room in the database with the number from the\r\nprovided room object, saves the changes, and then returns a Microsoft.AspNetCore.Http.HttpResults.CreatedAtRoute`1 result with the\r\ncreated room.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -977,8 +1023,8 @@
         "tags": [
           "Rooms"
         ],
-        "summary": "Get a room by ID",
-        "description": "Fetches a room by its ID",
+        "summary": "Retrieves a specific room from the database.",
+        "description": "This method retrieves a specific room from the database. It does this by finding the room in the database using the\r\nprovided room ID.\r\nIf the room is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.NotFound result.\r\nIf the room is found, it returns an Microsoft.AspNetCore.Http.HttpResults.Ok`1 result with the room.",
         "operationId": "GetRoom",
         "parameters": [
           {
@@ -1012,8 +1058,8 @@
         "tags": [
           "Rooms"
         ],
-        "summary": "Update a room",
-        "description": "Updates a room by its ID",
+        "summary": "Updates a specific room in the database.",
+        "description": "This method updates a specific room in the database. It does this by finding the room in the database using the\r\nprovided room ID.\r\nIf the room is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.NotFound result.\r\nIf the room is found, it updates the room's number with the number from the provided room object, saves the\r\nchanges, and then returns an Microsoft.AspNetCore.Http.HttpResults.Ok`1 result with the updated room.",
         "parameters": [
           {
             "name": "roomId",
@@ -1056,8 +1102,8 @@
         "tags": [
           "Rooms"
         ],
-        "summary": "Delete a room",
-        "description": "Deletes a room by its ID",
+        "summary": "Deletes a specific room from the database.",
+        "description": "This method deletes a specific room from the database. It does this by finding the room in the database using the\r\nprovided room ID.\r\nIf the room is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.NotFound result.\r\nIf the room is found, it removes the room from the database, saves the changes, and then returns an\r\nMicrosoft.AspNetCore.Http.HttpResults.Ok result.",
         "parameters": [
           {
             "name": "roomId",
@@ -1085,8 +1131,8 @@
         "tags": [
           "Tasks"
         ],
-        "summary": "Get all tasks",
-        "description": "Fetches all tasks",
+        "summary": "Retrieves all tasks from the database.",
+        "description": "This method retrieves all tasks from the database. It does this by selecting all tasks from the database and\r\nmapping them to the returnable task objects using the CreateReturnTask method.",
         "responses": {
           "200": {
             "description": "OK",
@@ -1107,8 +1153,8 @@
         "tags": [
           "Tasks"
         ],
-        "summary": "Create a new task",
-        "description": "Creates a new task",
+        "summary": "Adds a new task to the database.",
+        "description": "This method adds a new task to the database. It does this by creating a new task in the database with the\r\nproperties from the provided task object.\r\nAfter the task is created, it returns an Microsoft.AspNetCore.Http.HttpResults.Ok`1 result with the created task.",
         "requestBody": {
           "content": {
             "application/json": {
@@ -1138,14 +1184,14 @@
         "tags": [
           "Tasks"
         ],
-        "summary": "Get a task by ID",
-        "description": "Fetches a task by its ID",
+        "summary": "Retrieves a specific task from the database.",
+        "description": "This method retrieves a specific task from the database. It does this by finding the task in the database using the\r\nprovided task ID.\r\nIf the task is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult with a message indicating that the task was\r\nnot found and a 404 status code.\r\nIf the task is found, it creates a returnable task object with the properties from the found task and returns an\r\nMicrosoft.AspNetCore.Http.HttpResults.Ok`1 result with the returnable task.",
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
+            "name": "taskId",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
               "type": "string",
               "format": "uuid"
@@ -1169,8 +1215,8 @@
         "tags": [
           "Tasks"
         ],
-        "summary": "Update a task",
-        "description": "Updates a task by its ID",
+        "summary": "Updates a specific task in the database.",
+        "description": "This method updates a specific task in the database. It does this by finding the task in the database using the\r\nprovided task ID.\r\nIf the task is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult with a message indicating that the task was\r\nnot found and a 404 status code.\r\nIf the task is found, it updates the task's properties with the properties from the provided task object, saves the\r\nchanges, and then returns an Microsoft.AspNetCore.Http.HttpResults.Ok`1 result with the updated task.",
         "parameters": [
           {
             "name": "taskId",
@@ -1210,8 +1256,8 @@
         "tags": [
           "Tasks"
         ],
-        "summary": "Delete a task",
-        "description": "Deletes a task by its ID",
+        "summary": "Deletes a specific task from the database.",
+        "description": "This method deletes a specific task from the database. It does this by finding the task in the database using the\r\nprovided task ID.\r\nIf the task is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult with a message indicating that the task was\r\nnot found and a 404 status code.\r\nIf the task is found, it removes the task from the database, saves the changes, and then returns an\r\nMicrosoft.AspNetCore.Http.HttpResults.Ok result.",
         "parameters": [
           {
             "name": "taskId",
@@ -1227,6 +1273,83 @@
         "responses": {
           "200": {
             "description": "OK"
+          }
+        }
+      }
+    },
+    "/tasks/{taskId}/rooms": {
+      "put": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Assigns rooms to a specific task in the database.",
+        "description": "This method assigns rooms to a specific task in the database. It does this by finding the task and the rooms in the\r\ndatabase using the provided task ID and room IDs.\r\nIf the task or any of the rooms are not found, it returns a Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult with a message\r\nindicating that the task or the rooms were not found and a 404 status code.\r\nIf the task and all the rooms are found, it assigns the rooms to the task and returns an Microsoft.AspNetCore.Http.HttpResults.Ok result.",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "array",
+                "items": {
+                  "type": "string",
+                  "format": "uuid"
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Tasks"
+        ],
+        "summary": "Gets the assigned rooms of a task",
+        "description": "Gets the assigned rooms of a task",
+        "parameters": [
+          {
+            "name": "taskId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Room"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -1258,7 +1381,7 @@
         "tags": [
           "Users"
         ],
-        "summary": "Update a user",
+        "summary": "Creates a new user.",
         "description": "Updates a user by its ID",
         "requestBody": {
           "content": {
@@ -1297,12 +1420,13 @@
         "operationId": "GetUserById",
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
+            "name": "userId",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -1330,12 +1454,13 @@
         "description": "Updates a user by its ID",
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
+            "name": "userId",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
@@ -1369,22 +1494,47 @@
         "tags": [
           "Users"
         ],
-        "summary": "Deletes a user by its ID",
+        "summary": "Deletes a user by its ID.",
         "description": "Deletes a user by its ID",
         "parameters": [
           {
-            "name": "id",
-            "in": "query",
+            "name": "userId",
+            "in": "path",
             "required": true,
-            "style": "form",
+            "style": "simple",
             "schema": {
-              "type": "string"
+              "type": "string",
+              "format": "uuid"
             }
           }
         ],
         "responses": {
           "200": {
             "description": "OK"
+          },
+          "404": {
+            "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Gets the current logged in user.",
+        "description": "Deletes a user by its ID",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
           },
           "404": {
             "description": "Not Found"
@@ -1423,11 +1573,14 @@
         "properties": {
           "id": {
             "type": "string",
-            "format": "uuid"
+            "description": "The unique identifier of the cleaning run",
+            "format": "uuid",
+            "nullable": true
           },
           "date": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "cleaners": {
             "type": "array",
@@ -1451,35 +1604,54 @@
             "type": "string",
             "format": "uuid",
             "nullable": true
+          },
+          "phase": {
+            "$ref": "#/components/schemas/CleaningRunPhase"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Represents a cleaning run DTO."
+      },
+      "CleaningRunPhase": {
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "type": "integer",
+        "format": "int32"
       },
       "CleaningTask": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
+            "description": "The unique identifier of the cleaning task. This is read-only.",
             "format": "uuid"
           },
           "name": {
             "type": "string",
+            "description": "The name of the cleaning task.",
             "nullable": true
           },
           "description": {
             "type": "string",
+            "description": "The description of the cleaning task. This can be null.",
             "nullable": true
           },
           "recurrenceInterval": {
             "type": "integer",
+            "description": "The recurrence interval of the cleaning task. This can be null.",
             "format": "int32",
             "nullable": true
           },
           "onCheckout": {
-            "type": "boolean"
+            "type": "boolean",
+            "description": "Indicates whether the cleaning task is on checkout."
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Represents a cleaning task DTO."
       },
       "ForgotPasswordRequest": {
         "type": "object",
@@ -1586,23 +1758,28 @@
         "properties": {
           "id": {
             "type": "string",
+            "description": "The unique identifier of the product. This is read-only.",
             "format": "uuid",
             "nullable": true
           },
           "name": {
             "type": "string",
+            "description": "The name of the product.",
             "nullable": true
           },
           "inventoryQuantity": {
             "type": "integer",
+            "description": "The quantity of the product in inventory.",
             "format": "int32"
           },
           "image": {
             "type": "string",
+            "description": "The image of the product. This can be null.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Represents a product DTO."
       },
       "RefreshRequest": {
         "type": "object",
@@ -1669,14 +1846,17 @@
         "properties": {
           "id": {
             "type": "string",
+            "description": "The unique identifier of the room. This is read-only.",
             "format": "uuid"
           },
           "roomNumber": {
             "type": "string",
+            "description": "The number of the room.",
             "nullable": true
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Represents a Room."
       },
       "RoomRefill": {
         "type": "object",
@@ -1686,15 +1866,18 @@
           },
           "id": {
             "type": "string",
+            "description": "The unique identifier of the room refill. This is write-only and can be null.",
             "format": "uuid",
             "nullable": true
           },
           "quantity": {
             "type": "integer",
+            "description": "The quantity of the product item to be refilled in the room. This is required.",
             "format": "int32"
           }
         },
-        "additionalProperties": false
+        "additionalProperties": false,
+        "description": "Represents a RoomRefill."
       },
       "TwoFactorRequest": {
         "type": "object",
@@ -1752,6 +1935,7 @@
           "id": {
             "type": "string",
             "description": "A unique identifier for the User.",
+            "format": "uuid",
             "nullable": true
           },
           "name": {
