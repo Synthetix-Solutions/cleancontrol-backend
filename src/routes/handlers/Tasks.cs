@@ -119,7 +119,9 @@ public static class Tasks {
 		(_, dbTask.Name, dbTask.Description, dbTask.RecurrenceInterval, dbTask.OnCheckout) = task;
 
 		db.SaveChanges();
-		return TypedResults.Ok<CleaningTask>(null);
+
+		var returnTask = CleaningTask.FromDbRoomCleaningTask(dbTask);
+		return TypedResults.Ok(returnTask);
 	}
 
 	/// <summary>
