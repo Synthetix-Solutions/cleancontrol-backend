@@ -2,6 +2,7 @@
 
 using CleanControlDb;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using CleaningTask = CleanControlBackend.Schemas.CleaningTask;
 
 #endregion
@@ -58,7 +59,7 @@ public static class Tasks {
 	///     successfully assigned to the task, or a <see cref="ProblemHttpResult" /> if the task or any of the rooms were not
 	///     found.
 	/// </returns>
-	public static Results<Ok, ProblemHttpResult> AssignRooms(Guid taskId, IEnumerable<Guid> roomIds, CleancontrolContext db) {
+	public static Results<Ok, ProblemHttpResult> AssignRooms(Guid taskId, [FromBody] IEnumerable<Guid> roomIds, CleancontrolContext db) {
 		var task = db.CleaningTasks.Find(taskId);
 		var rooms = roomIds
 				   .Select(id => db.Rooms.Find(id))
