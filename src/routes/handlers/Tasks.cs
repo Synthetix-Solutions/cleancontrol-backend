@@ -79,6 +79,7 @@ public static class Tasks {
 	}
 
 	private static Results<Ok, ProblemHttpResult> AssignRoomsToTask(CleanControlDb.CleaningTask task, ICollection<Room> rooms) {
+		task.Rooms.Clear();
 		task.Rooms = rooms;
 		return TypedResults.Ok();
 	}
