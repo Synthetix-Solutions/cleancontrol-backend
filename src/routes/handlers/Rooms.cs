@@ -1,5 +1,6 @@
 #region
 
+using System.Collections.Immutable;
 using CleanControlDb;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Room = CleanControlBackend.Schemas.Room;
@@ -137,7 +138,10 @@ public static class Rooms {
 	/// </remarks>
 	/// <returns>An <see cref="Ok{T}" /> result that contains a list of all rooms in the database.</returns>
 	public static Ok<IEnumerable<Room>> GetAllRooms(CleancontrolContext db) {
-		var rooms = db.Rooms.Select(Room.FromDbRoom);
+		var rooms = db
+				   .Rooms
+				   .ToImmutableArray()
+				   .Select(Room.FromDbRoom);
 
 		return TypedResults.Ok(rooms);
 	}

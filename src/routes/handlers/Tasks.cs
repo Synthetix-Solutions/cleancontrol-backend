@@ -1,5 +1,6 @@
 #region
 
+using System.Collections.Immutable;
 using CleanControlDb;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
@@ -107,7 +108,10 @@ public static class Tasks {
 		if (task is null)
 			return TypedResults.NotFound();
 
-		var returnRooms = task.Rooms.Select(Schemas.Room.FromDbRoom);
+		var returnRooms = task
+						 .Rooms
+						 .ToImmutableArray()
+						 .Select(Schemas.Room.FromDbRoom);
 
 		return TypedResults.Ok(returnRooms);
 	}
