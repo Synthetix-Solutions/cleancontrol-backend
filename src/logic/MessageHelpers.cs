@@ -78,19 +78,21 @@ public static class MessageHelpers {
 	}
 
 	/// <summary>
-	///     Retrieves the messages for a specific user within a specified date range.
+	///     Retrieves the messages exchanged between two users within a specific date range.
 	/// </summary>
 	/// <param name="userId">The ID of the user for whom to retrieve messages.</param>
-	/// <param name="dateFrom">The start date of the range within which to retrieve messages.</param>
-	/// <param name="dateTo">The end date of the range within which to retrieve messages.</param>
+	/// <param name="senderId">The ID of the other user involved in the message exchange.</param>
+	/// <param name="dateFrom">The start date of the date range within which to retrieve messages.</param>
+	/// <param name="dateTo">The end date of the date range within which to retrieve messages.</param>
 	/// <param name="db">The database context.</param>
 	/// <remarks>
-	///     This method retrieves all messages that the specified user has sent within the specified date range.
-	///     Each message includes the sender, receiver, content, and the time it was sent.
+	///     This method retrieves all messages that were exchanged between the specified user and another user within a
+	///     specific date range.
+	///     The messages are returned in ascending order of the date and time they were sent.
 	/// </remarks>
 	/// <returns>
-	///     An IEnumerable of Message objects that represent the messages sent by the user within the specified date
-	///     range.
+	///     An IEnumerable of Message objects that represent the messages exchanged between the two users within the specified
+	///     date range.
 	/// </returns>
 	public static IEnumerable<Message> GetMessagesForUser(Guid userId, Guid senderId, DateTime dateFrom, DateTime dateTo, CleancontrolContext db) {
 		var dateFromUtc = DateTime.SpecifyKind(dateFrom, DateTimeKind.Utc);

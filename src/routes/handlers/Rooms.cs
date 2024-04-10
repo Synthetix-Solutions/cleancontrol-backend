@@ -62,7 +62,7 @@ public static class Rooms {
 
 		dbRoom.Number = room.roomNumber;
 
-		var returnRoom = new Room(dbRoom.Id, dbRoom.Number);
+		var returnRoom = Room.FromDbRoom(dbRoom);
 
 		db.SaveChanges();
 		return TypedResults.Ok(returnRoom);
@@ -88,7 +88,7 @@ public static class Rooms {
 		if (dbRoom is null)
 			return TypedResults.NotFound();
 
-		var room = new Room(dbRoom.Id, dbRoom.Number);
+		var room = Room.FromDbRoom(dbRoom);
 
 		return TypedResults.Ok(room);
 	}
@@ -117,7 +117,7 @@ public static class Rooms {
 		var dbRoom = new CleanControlDb.Room { Number = room.roomNumber };
 		db.Rooms.Add(dbRoom);
 
-		var returnRoom = new Room(dbRoom.Id, dbRoom.Number);
+		var returnRoom = Room.FromDbRoom(dbRoom);
 
 		db.SaveChanges();
 		return TypedResults.CreatedAtRoute(
@@ -137,8 +137,8 @@ public static class Rooms {
 	/// </remarks>
 	/// <returns>An <see cref="Ok{T}" /> result that contains a list of all rooms in the database.</returns>
 	public static Ok<IEnumerable<Room>> GetAllRooms(CleancontrolContext db) {
-		var rooms = db.Rooms.Select(r => new Room(r.Id, r.Number));
+		var rooms = db.Rooms.Select(Room.FromDbRoom);
 
-		return TypedResults.Ok<IEnumerable<Room>>(rooms);
+		return TypedResults.Ok(rooms);
 	}
 }

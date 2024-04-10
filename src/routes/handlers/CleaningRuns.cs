@@ -120,12 +120,25 @@ public static class CleaningRuns {
 	}
 
 	/// <summary>
-	///     Gets all cleaning runs
+	///     Retrieves all cleaning runs.
 	/// </summary>
-	/// <param name="db">Database context</param>
+	/// <param name="db">The database context.</param>
+	/// <param name="context">
+	///     The HttpContext object that encapsulates all HTTP-specific information about an individual HTTP
+	///     request.
+	/// </param>
+	/// <param name="userManager">The UserManager object that provides the APIs for managing user in a persistence store.</param>
+	/// <remarks>
+	///     This method retrieves all cleaning runs that the current user has access to. It does this by getting the current
+	///     user and their role,
+	///     and then filtering the cleaning runs based on the user's role. If the user is an admin, they have access to all
+	///     cleaning runs.
+	///     If the user is a cleaner, they only have access to cleaning runs that are not finished and that they are a part of.
+	///     The cleaning runs are then converted to return cleaning runs and returned.
+	/// </remarks>
 	/// <returns>
-	///     <see cref="Ok{IEnumerable}" /> with all cleaning runs, else a <see cref="ProblemHttpResult" /> containing
-	///     error details.
+	///     A <see cref="Task{TResult}" /> that represents the asynchronous operation. The task result contains an
+	///     <see cref="Ok{T}" /> result with a list of cleaning runs.
 	/// </returns>
 	public static async Task<Ok<IEnumerable<CleaningRun>>> GetAllCleaningRuns(CleancontrolContext db
 																			, HttpContext context
@@ -184,7 +197,7 @@ public static class CleaningRuns {
 		if (nextRoom is null)
 			return TypedResults.NotFound();
 
-		var returnRoom = new Room(nextRoom.Id, nextRoom.Number);
+		var returnRoom = Room.FromDbRoom(nextRoom);
 
 		return TypedResults.Ok(returnRoom);
 	}

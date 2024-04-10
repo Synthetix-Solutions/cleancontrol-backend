@@ -383,8 +383,8 @@
         "tags": [
           "Cleaning runs"
         ],
-        "summary": "Gets all cleaning runs",
-        "description": "Fetches all cleaning runs",
+        "summary": "Retrieves all cleaning runs.",
+        "description": "This method retrieves all cleaning runs that the current user has access to. It does this by getting the current\r\nuser and their role,\r\nand then filtering the cleaning runs based on the user's role. If the user is an admin, they have access to all\r\ncleaning runs.\r\nIf the user is a cleaner, they only have access to cleaning runs that are not finished and that they are a part of.\r\nThe cleaning runs are then converted to return cleaning runs and returned.",
         "responses": {
           "200": {
             "description": "OK",
@@ -931,8 +931,8 @@
           "Rooms",
           "Room tasks"
         ],
-        "summary": "Deletes a specific room task from the database.",
-        "description": "This method deletes a specific room task from the database. It does this by finding the room and the task in the\r\ndatabase using the provided room ID and task ID.\r\nIf the room or the task is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.ProblemHttpResult with a 404 status code and an\r\nerror message.\r\nIf the room and the task are found, it creates a new room cleanup with the found room and task, adds it to the\r\ndatabase, saves the changes, and then returns an Microsoft.AspNetCore.Http.HttpResults.Ok result.",
+        "summary": "Marks a room task as completed.",
+        "description": "Deletes a room task by its ID",
         "parameters": [
           {
             "name": "roomId",
@@ -1320,8 +1320,8 @@
         "tags": [
           "Tasks"
         ],
-        "summary": "Gets the assigned rooms of a task",
-        "description": "Gets the assigned rooms of a task",
+        "summary": "Retrieves the rooms assigned to a specific task.",
+        "description": "This method retrieves the rooms that are assigned to a specific task. It does this by finding the task in the\r\ndatabase using the\r\nprovided task ID.\r\nIf the task is not found, it returns a Microsoft.AspNetCore.Http.HttpResults.NotFound result.\r\nIf the task is found, it retrieves the rooms assigned to the task, converts them to returnable room objects, and\r\nreturns an\r\nMicrosoft.AspNetCore.Http.HttpResults.Ok`1 result with the list of returnable rooms.",
         "parameters": [
           {
             "name": "taskId",
@@ -1573,12 +1573,13 @@
         "properties": {
           "id": {
             "type": "string",
-            "description": "The unique identifier of the cleaning run",
+            "description": "The unique identifier of the cleaning run. This is read-only and cannot be set externally.",
             "format": "uuid",
             "nullable": true
           },
           "date": {
             "type": "string",
+            "description": "The date of the cleaning run.",
             "format": "date-time",
             "nullable": true
           },
@@ -1587,6 +1588,7 @@
             "items": {
               "$ref": "#/components/schemas/User"
             },
+            "description": "The users who are assigned to the cleaning run.",
             "nullable": true
           },
           "cleanerIds": {
@@ -1595,6 +1597,7 @@
               "type": "string",
               "format": "uuid"
             },
+            "description": "The unique identifiers of the users who are assigned to the cleaning run.",
             "nullable": true
           },
           "startingRoom": {
@@ -1602,6 +1605,7 @@
           },
           "startingRoomId": {
             "type": "string",
+            "description": "The unique identifier of the room where the cleaning run starts.",
             "format": "uuid",
             "nullable": true
           },
@@ -1968,7 +1972,7 @@
     "securitySchemes": {
       "Bearer": {
         "type": "apiKey",
-        "description": "Fake JWT Token",
+        "description": "JWT Token",
         "name": "Authorization",
         "in": "header"
       }

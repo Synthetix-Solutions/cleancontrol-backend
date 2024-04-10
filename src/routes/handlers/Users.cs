@@ -161,7 +161,7 @@ public static class Users {
 						   u => new User(
 										 u.Id
 									   , u.Name
-									   , u.Email
+									   , u.Email!
 									   , u.GetRole(userManager)
 										  .Result
 									   , u.IsAdUser

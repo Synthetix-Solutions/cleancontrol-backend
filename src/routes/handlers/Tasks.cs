@@ -84,6 +84,24 @@ public static class Tasks {
 		return TypedResults.Ok();
 	}
 
+	/// <summary>
+	///     Retrieves the rooms assigned to a specific task.
+	/// </summary>
+	/// <param name="taskId">The ID of the task for which to retrieve the assigned rooms.</param>
+	/// <param name="db">The database context.</param>
+	/// <remarks>
+	///     This method retrieves the rooms that are assigned to a specific task. It does this by finding the task in the
+	///     database using the
+	///     provided task ID.
+	///     If the task is not found, it returns a <see cref="NotFound" /> result.
+	///     If the task is found, it retrieves the rooms assigned to the task, converts them to returnable room objects, and
+	///     returns an
+	///     <see cref="Ok{T}" /> result with the list of returnable rooms.
+	/// </remarks>
+	/// <returns>
+	///     A <see cref="Results{T1, T2}" /> object that contains either an <see cref="Ok{T}" /> result with the list of
+	///     returnable rooms, or a <see cref="NotFound" /> result if the task was not found.
+	/// </returns>
 	public static Results<Ok<IEnumerable<Schemas.Room>>, NotFound> GetAssignedRooms(Guid taskId, CleancontrolContext db) {
 		var task = db.CleaningTasks.Find(taskId);
 		if (task is null)

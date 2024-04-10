@@ -1,5 +1,6 @@
 #region
 
+using System.ComponentModel.DataAnnotations;
 using System.Diagnostics.CodeAnalysis;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -16,7 +17,12 @@ namespace CleanControlBackend.Schemas;
 /// <param name="recurrenceInterval">The recurrence interval of the cleaning task. This can be null.</param>
 /// <param name="onCheckout">Indicates whether the cleaning task is on checkout.</param>
 [SuppressMessage("ReSharper", "InconsistentNaming")]
-public record CleaningTask([SwaggerSchema(ReadOnly = true)] Guid Id, string name, string? description, int? recurrenceInterval, bool onCheckout) {
+public record CleaningTask([SwaggerSchema(ReadOnly = true)] Guid Id
+						 , [Required] string name
+						 , string? description
+						 , int? recurrenceInterval
+						 , [Required] bool onCheckout
+) {
 	/// <summary>
 	///     Creates a returnable cleaning task object from a database cleaning task object.
 	/// </summary>

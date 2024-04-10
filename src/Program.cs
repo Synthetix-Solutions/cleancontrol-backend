@@ -65,7 +65,7 @@ builder
 													"Bearer"
 												  , new OpenApiSecurityScheme {
 														In = ParameterLocation.Header
-													  , Description = "Fake JWT Token"
+													  , Description = "JWT Token"
 													  , Name = "Authorization"
 													  , Scheme = "Bearer"
 													  , Type = SecuritySchemeType.ApiKey
@@ -78,8 +78,8 @@ builder
 																 Reference = new OpenApiReference {
 																	 Type = ReferenceType.SecurityScheme, Id = "Bearer"
 																 }
-															   , Scheme = "oauth2"
-															   , Name = "Bearer"
+															   , Scheme = "Bearer"
+															   , Name = "Authorization"
 															   , In = ParameterLocation.Header
 															 }
 														   , []
@@ -137,9 +137,6 @@ app
 
 app.UseHttpsRedirection();
 app.MapIdentityApi<CleanControlUser>();
-// app.UseAuthentication();
-// app.UseAuthorization();
-
 
 IEnumerable<Action<WebApplication>> mappers = [
 												  UsersEndpoints.Map
@@ -176,7 +173,7 @@ static async Task AuthQueryStringToHeader(HttpContext context, Func<Task> next) 
 			context.Request.Headers.Append("Authorization", $"Bearer {token}");
 	}
 
-	await next?.Invoke()!;
+	await next();
 }
 
 static async Task CreateRolesAndUsers(IServiceProvider serviceProvider) {

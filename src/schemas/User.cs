@@ -59,7 +59,7 @@ public record User(Guid? id
 		new(
 			dbUser.Id
 		  , dbUser.Name
-		  , dbUser.Email
+		  , dbUser.Email!
 		  , await dbUser.GetRole(
 								 userManager
 								)
