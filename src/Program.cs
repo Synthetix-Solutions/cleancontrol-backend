@@ -31,6 +31,7 @@ builder
 								 .WithOrigins(
 											  "http://localhost:5240"
 											, "http://49.13.203.173:3000"
+											, "https://49.13.203.173:3000"
 											, "https://*.synthetix-solutions.com:3000"
 											, "https://synthetix-solutions.com:3000"
 											 )
